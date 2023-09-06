@@ -62,15 +62,17 @@ export default function Signin() {
           </div>
           <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
             <form onSubmit={onSubmit}>
-              <input
-                className="w-full px-4 py-2 mb-6 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
-                type="email"
-                name="email"
-                id="email"
-                value={email}
-                placeholder="이메일"
-                onChange={onChange}
-              />
+              <div>
+                <input
+                  className="w-full px-4 py-2 mb-6 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={email}
+                  placeholder="이메일"
+                  onChange={onChange}
+                />
+              </div>
               <div className="relative mb-6">
                 <input
                   className="w-full px-4 py-2 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"

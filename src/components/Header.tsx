@@ -7,6 +7,7 @@ export default function Header() {
 
   const pathMathRoute = (route: string) => {
     if (route === location.pathname) {
+      console.log(route === location.pathname)
       return true
     }
   }
@@ -26,23 +27,23 @@ export default function Header() {
           <ul className="flex space-x-10">
             <li
               className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                pathMathRoute('/') && 'border-b-red-400 text-black'
+                pathMathRoute('/profile') && '!border-b-red-400 !text-black'
               }`}
               onClick={() => navigate('/profile')}
             >
-              홈
+              프로필
             </li>
             <li
               className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                pathMathRoute('/offers') && 'border-b-red-400 text-black'
+                pathMathRoute('/offers') && '!border-b-red-400 !text-black'
               }`}
               onClick={() => navigate('/offers')}
             >
-              판매
+              상품등록
             </li>
             <li
               className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                pathMathRoute('/sign-in') && 'border-b-red-400 text-black'
+                pathMathRoute('/sign-in') && '!border-b-red-400 !text-black'
               }`}
               onClick={() => navigate('/sign-in')}
             >
