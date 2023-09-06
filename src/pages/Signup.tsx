@@ -5,7 +5,6 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { auth, db } from '../firebase'
 import { Timestamp, doc, setDoc } from 'firebase/firestore'
 import Toast from '../components/Toast'
-import { FirebaseError } from 'firebase/app'
 import { Alert } from '../interfaces/interfaces'
 
 export const initAlert: Alert = { status: 'pending', message: '' }
