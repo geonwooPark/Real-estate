@@ -1,20 +1,69 @@
 import React, { useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
-import { Link } from 'react-router-dom'
-import OAuth from '../components/OAuth'
+import { Link, useNavigate } from 'react-router-dom'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { auth, db } from '../firebase'
+import { Timestamp, doc, setDoc } from 'firebase/firestore'
+import Toast from '../components/Toast'
+import { FirebaseError } from 'firebase/app'
+import { Alert } from '../interfaces/interfaces'
+
+export const initAlert: Alert = { status: 'pending', message: '' }
+
+const initData = {
+  name: '',
+  email: '',
+  password: '',
+}
 
 export default function SignUp() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  })
-  const { name, email, password } = formData
+  const navigate = useNavigate()
+
+  const [formData, setFormData] = useState(initData)
+  const [alert, setAlert] = useState(initAlert)
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  const { name, email, password } = formData
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
+  }
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      if (!name || !email || !password) {
+        throw new Error('회원가입을 위해 빈 칸을 모두 채워주세요.')
+      }
+
+      if (password.length < 6) {
+        throw new Error('비밀번호는 최소 6자리 이상이어야 합니다.')
+      }
+
+      setLoading(true)
+      const result = await createUserWithEmailAndPassword(auth, email, password)
+      await updateProfile(result.user, {
+        displayName: name,
+      })
+      await setDoc(doc(db, 'users', result.user.uid), {
+        uid: result.user.uid,
+        name,
+        email,
+        createdAt: Timestamp.fromDate(new Date()),
+      })
+      setFormData(initData)
+      navigate('/')
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlert({
+          status: 'error',
+          message: error.message,
+        })
+        setLoading(false)
+      }
+    }
   }
 
   return (
@@ -29,12 +78,11 @@ export default function SignUp() {
           />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               className="w-full px-4 py-2 mb-6 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
               type="name"
               name="name"
-              id="name"
               value={name}
               placeholder="이름"
               onChange={onChange}
@@ -44,7 +92,6 @@ export default function SignUp() {
               className="w-full px-4 py-2 mb-6 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
               type="email"
               name="email"
-              id="email"
               value={email}
               placeholder="이메일"
               onChange={onChange}
@@ -54,7 +101,6 @@ export default function SignUp() {
                 className="w-full px-4 py-2 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
                 type={showPassword ? 'text' : 'password'}
                 name="password"
-                id="password"
                 value={password}
                 placeholder="비밀번호"
                 onChange={onChange}
@@ -85,14 +131,18 @@ export default function SignUp() {
               </p>
             </div>
             <button
-              className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium rounded hover:bg-blue-400 transition duration-200 ease-in-out active:bg-blue-800"
+              className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium rounded hover:bg-blue-400 transition duration-200 ease-in-out active:bg-blue-800 disabled:bg-gray-400"
               type="submit"
+              disabled={loading}
             >
               회원가입
             </button>
           </form>
         </div>
       </div>
+      {alert.status !== 'pending' && (
+        <Toast alert={alert} setAlert={setAlert} />
+      )}
     </section>
   )
 }

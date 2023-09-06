@@ -12,7 +12,7 @@ export default function Header() {
   }
 
   return (
-    <div className="bg-white border-b shadow-sm sticky top-0 z-50">
+    <div className="bg-white border-b sticky top-0 z-50">
       <header className="flex justify-between items-center px-3 max-w-6xl mx-auto">
         <div>
           <img
@@ -28,9 +28,9 @@ export default function Header() {
               className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
                 pathMathRoute('/') && 'border-b-red-400 text-black'
               }`}
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/profile')}
             >
-              Home
+              홈
             </li>
             <li
               className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
@@ -38,7 +38,7 @@ export default function Header() {
               }`}
               onClick={() => navigate('/offers')}
             >
-              Offers
+              판매
             </li>
             <li
               className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
@@ -46,7 +46,7 @@ export default function Header() {
               }`}
               onClick={() => navigate('/sign-in')}
             >
-              Sign In
+              로그인
             </li>
           </ul>
         </div>
