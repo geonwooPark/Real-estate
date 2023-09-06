@@ -11,9 +11,11 @@ export default function OAuth() {
   const navigate = useNavigate()
 
   const [alert, setAlert] = useState(initAlert)
+  const [loading, setLoading] = useState(false)
 
   const onGoogleClick = async () => {
     try {
+      setLoading(true)
       const provider = new GoogleAuthProvider()
       const result = await signInWithPopup(auth, provider)
 
@@ -35,6 +37,8 @@ export default function OAuth() {
           message: '구글 로그인에 실패 했습니다.',
         })
       }
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -42,7 +46,8 @@ export default function OAuth() {
       <button
         type="button"
         onClick={onGoogleClick}
-        className="flex items-center justify-center w-full bg-white px-7 py-3 text-sm font-medium rounded hover:bg-gray-200 active:bg-gray-400 transition duration-200 ease-in-out "
+        disabled={loading}
+        className="flex items-center justify-center w-full bg-white px-7 py-3 text-sm font-medium rounded hover:bg-gray-200 active:bg-gray-400 transition duration-200 ease-in-out disabled:bg-gray-400"
       >
         <FcGoogle size={20} className="mr-1" />
         구글로 로그인

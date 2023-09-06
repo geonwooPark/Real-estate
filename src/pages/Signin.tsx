@@ -23,7 +23,6 @@ export default function Signin() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     try {
       if (!email) {
         throw new Error('이메일을 입력하세요.')
@@ -34,6 +33,7 @@ export default function Signin() {
       setLoading(true)
       const result = await signInWithEmailAndPassword(auth, email, password)
       if (result.user) {
+        setFormData({ email: '', password: '' })
         navigate('/')
       }
     } catch (error) {
