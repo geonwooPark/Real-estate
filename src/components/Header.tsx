@@ -6,7 +6,7 @@ import { auth } from '../firebase'
 export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { loggedIn, setLoggedIn } = useAuthStatus()
+  const { loggedIn, setLoggedIn, checkingStatus } = useAuthStatus()
 
   const pathMatchRoute = (route: string) => {
     if (route === location.pathname) {
@@ -63,14 +63,17 @@ export default function Header() {
                 </li>
               </>
             ) : (
-              <li
-                className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                  pathMatchRoute('/sign-in') && '!border-b-red-400 !text-black'
-                }`}
-                onClick={() => navigate('/sign-in')}
-              >
-                로그인
-              </li>
+              !checkingStatus && (
+                <li
+                  className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
+                    pathMatchRoute('/sign-in') &&
+                    '!border-b-red-400 !text-black'
+                  }`}
+                  onClick={() => navigate('/sign-in')}
+                >
+                  로그인
+                </li>
+              )
             )}
           </ul>
         </div>
