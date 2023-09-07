@@ -15,5 +15,5 @@ export default function useAuthStatus() {
     })
   }, [])
 
-  return { loggedIn, checkingStatus }
+  return { loggedIn, checkingStatus, setLoggedIn }
 }

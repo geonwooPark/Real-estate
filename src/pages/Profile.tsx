@@ -18,11 +18,6 @@ export default function Profile() {
   const [changeDetail, setChangeDetail] = useState(false)
   const { name, email } = formData
 
-  const onLogout = () => {
-    auth.signOut()
-    navigate('/sign-in')
-  }
-
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
@@ -100,14 +95,6 @@ export default function Profile() {
               disabled
               className="w-full px-4 py-2 mb-3 text-sm text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out"
             />
-            <div className="text-right mb-3">
-              <button
-                onClick={onLogout}
-                className="text-sm text-red-500 hover:text-red-600 transition duration-200 ease-in-out"
-              >
-                로그아웃
-              </button>
-            </div>
           </form>
         </div>
       </section>
