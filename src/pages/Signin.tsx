@@ -117,7 +117,7 @@ export default function Signin() {
                 </p>
               </div>
               <button
-                className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium rounded hover:bg-blue-400 transition duration-200 ease-in-out active:bg-blue-800 disabled:bg-gray-400"
+                className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium rounded transition duration-200 ease-in-out hover:bg-blue-400  active:bg-blue-800 disabled:bg-gray-400"
                 type="submit"
                 disabled={loading}
               >

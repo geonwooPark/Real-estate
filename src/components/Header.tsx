@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import useAuthStatus from '../hooks/useAuthStatus'
 import { auth } from '../firebase'
 
@@ -8,16 +8,16 @@ export default function Header() {
   const navigate = useNavigate()
   const { loggedIn, setLoggedIn, checkingStatus } = useAuthStatus()
 
-  const pathMatchRoute = (route: string) => {
-    if (route === location.pathname) {
-      return true
-    }
-  }
-
   const onLogout = () => {
     auth.signOut()
     setLoggedIn(false)
     navigate('/sign-in')
+  }
+
+  const pathMatchRoute = (route: string) => {
+    if (route === location.pathname) {
+      return true
+    }
   }
 
   return (

@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { AiOutlineEdit } from 'react-icons/ai'
+import { AiOutlineEdit, AiOutlineHome } from 'react-icons/ai'
 import { auth, db } from '../firebase'
 import { useNavigate } from 'react-router'
 import { initAlert } from './Signup'
 import { updateProfile } from 'firebase/auth'
 import { updateDoc, doc } from 'firebase/firestore'
 import Toast from '../components/Toast'
+import { Link } from 'react-router-dom'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -96,6 +97,17 @@ export default function Profile() {
               className="w-full px-4 py-2 mb-3 text-sm text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out"
             />
           </form>
+          <button
+            type="submit"
+            className="w-full px-7 py-3 bg-blue-600 text-white text-sm rounded transition duration-200 ease-in-out hover:bg-blue-400 active:bg-blue-800"
+          >
+            <Link
+              to={'/create-listing'}
+              className="flex justify-center items-center"
+            >
+              <AiOutlineHome size={20} className="mr-1" />내 매물 올리기
+            </Link>
+          </button>
         </div>
       </section>
       {alert.status !== 'pending' && (
