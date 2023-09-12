@@ -6,6 +6,8 @@ import { auth, db } from '../firebase'
 import { Timestamp, doc, setDoc } from 'firebase/firestore'
 import Toast from '../components/Toast'
 import { Alert } from '../interfaces/interfaces'
+import spinner from '../assets/svg/spinner.svg'
+import Button from '../components/common/Button'
 
 export const initAlert: Alert = { status: 'pending', message: '' }
 
@@ -69,9 +71,9 @@ export default function SignUp() {
   return (
     <>
       <section>
-        <h1 className="text-3xl text-center mt-6 font-bold">회원가입</h1>
-        <div className="flex justify-center flex-wrap items-center px-6 py-12 max-w-6xl mx-auto">
-          <div className="md:w-[67%] lg:w-[50%] mb-12 md:mb-6">
+        <h1>회원가입</h1>
+        <div className="flex justify-center flex-wrap items-center px-6 py-6 max-w-6xl mx-auto md:py-12">
+          <div className="mb-6 md:w-[67%] lg:w-[50%] lg:mb-0">
             <img
               src="https://plus.unsplash.com/premium_photo-1681487814165-018814e29155?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80"
               alt="key"
@@ -81,16 +83,15 @@ export default function SignUp() {
           <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
             <form onSubmit={onSubmit}>
               <input
-                className="w-full px-4 py-2 mb-6 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
+                className="input w-full mb-6"
                 type="name"
                 name="name"
                 value={name}
                 placeholder="이름"
                 onChange={onChange}
               />
-
               <input
-                className="w-full px-4 py-2 mb-6 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
+                className="input w-full mb-6"
                 type="email"
                 name="email"
                 value={email}
@@ -99,13 +100,13 @@ export default function SignUp() {
               />
               <div className="relative mb-6">
                 <input
-                  className="w-full px-4 py-2 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
+                  className="input w-full"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={password}
                   placeholder="비밀번호"
                   onChange={onChange}
-                />{' '}
+                />
                 {showPassword ? (
                   <AiFillEyeInvisible
                     size={20}
@@ -131,13 +132,15 @@ export default function SignUp() {
                   </Link>
                 </p>
               </div>
-              <button
-                className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium rounded hover:bg-blue-400 transition duration-200 ease-in-out active:bg-blue-800 disabled:bg-gray-400"
+              <Button
                 type="submit"
+                level="primary"
+                size="l"
                 disabled={loading}
+                fullWidth={true}
               >
                 회원가입
-              </button>
+              </Button>
             </form>
           </div>
         </div>

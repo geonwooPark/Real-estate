@@ -12,7 +12,7 @@ export default function Toast({ alert, setAlert }: ToastProps) {
 
   useEffect(() => {
     const upToast = setTimeout(() => setAnimation(true), 100)
-    const downToast = setTimeout(() => setAnimation(false), 2500)
+    const downToast = setTimeout(() => setAnimation(false), 2600)
     const closeToast = setTimeout(() => {
       setAlert(initAlert)
     }, 3100)
@@ -26,17 +26,13 @@ export default function Toast({ alert, setAlert }: ToastProps) {
 
   return (
     <div
-      className={`fixed bottom-0 w-full bg-slate-800 px-4 py-2 text-white text-xs text-center border-b-2 border-solid ${
+      className={`fixed bottom-0 w-full bg-slate-800 px-4 py-2 text-white text-xs text-center border-b-2 border-solid transition duration-500 ease-in-out ${
         alert.status === 'error'
           ? 'border-red-600'
           : alert.status === 'success'
           ? 'border-green-600'
           : 'border-none'
-      } ${
-        animation
-          ? 'translate-y-0 transition duration-500 ease-in-out'
-          : 'translate-y-10 transition duration-500 ease-in-out'
-      }`}
+      } ${animation ? 'translate-y-0' : 'translate-y-10'}`}
     >
       {alert.message}
     </div>

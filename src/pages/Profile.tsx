@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
 import { AiOutlineEdit, AiOutlineHome } from 'react-icons/ai'
 import { auth, db } from '../firebase'
-import { useNavigate } from 'react-router'
 import { initAlert } from './Signup'
 import { updateProfile } from 'firebase/auth'
 import { updateDoc, doc } from 'firebase/firestore'
 import Toast from '../components/Toast'
-import { Link } from 'react-router-dom'
+import Button from '../components/common/Button'
+import { useNavigate } from 'react-router'
 
 export default function Profile() {
   const navigate = useNavigate()
-
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName,
     email: auth.currentUser?.email,
@@ -67,7 +66,7 @@ export default function Profile() {
   return (
     <>
       <section className="max-w-6xl flex flex-col items-center mx-auto">
-        <h1 className="text-3xl text-center mt-6 font-bold">내 프로필</h1>
+        <h1>내 프로필</h1>
         <div className="w-full md:w-[50%] mt-6 px-3">
           <form>
             <div className="relative mb-3">
@@ -97,17 +96,16 @@ export default function Profile() {
               className="w-full px-4 py-2 mb-3 text-sm text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out"
             />
           </form>
-          <button
-            type="submit"
-            className="w-full px-7 py-3 bg-blue-600 text-white text-sm rounded transition duration-200 ease-in-out hover:bg-blue-400 active:bg-blue-800"
+          <Button
+            type="button"
+            level="primary"
+            size="l"
+            withIcon={true}
+            fullWidth={true}
+            onClick={() => navigate('/create-listing')}
           >
-            <Link
-              to={'/create-listing'}
-              className="flex justify-center items-center"
-            >
-              <AiOutlineHome size={20} className="mr-1" />내 매물 올리기
-            </Link>
-          </button>
+            <AiOutlineHome size={20} className="mr-1" />내 매물 올리기
+          </Button>
         </div>
       </section>
       {alert.status !== 'pending' && (

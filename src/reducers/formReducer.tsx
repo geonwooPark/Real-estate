@@ -1,6 +1,9 @@
 export type InitialState = {
-  itemType: string // 'sale' | 'jeonse' | 'monthly'
+  itemType: 'sale' | 'jeonse' | 'monthly'
   address: string
+  zipcode: string
+  latitude: string
+  longitude: string
   rooms: number
   bathrooms: number
   parking: boolean
@@ -16,6 +19,9 @@ export type InitialState = {
 export const initialState: InitialState = {
   itemType: 'sale',
   address: '',
+  zipcode: '',
+  latitude: '',
+  longitude: '',
   rooms: 1,
   bathrooms: 1,
   parking: false,
@@ -37,39 +43,37 @@ export const initialState: InitialState = {
   availableDate: '',
 }
 
-export type Action = {
-  type: 'select-parking'
-}
-
-export type ActionWithStringPayload = {
-  type:
-    | 'select-type'
-    | 'select-address'
-    | 'select-options'
-    | 'write-detail'
-    | 'select-availableDate'
-  payload: string
-}
-
-export type ActionWithNumberPayload = {
-  type: 'select-rooms' | 'select-bathrooms' | 'set-price' | 'set-maintenanceFee'
-  payload: number
-}
+export type ActionWithPayload =
+  | {
+      type: 'select-type'
+      payload: 'sale' | 'jeonse' | 'monthly'
+    }
+  | {
+      type:
+        | 'research-address'
+        | 'research-zipcode'
+        | 'research-latitude'
+        | 'research-longitude'
+        | 'select-parking'
+        | 'select-options'
+        | 'write-detail'
+        | 'select-availableDate'
+      payload: string
+    }
+  | {
+      type:
+        | 'select-rooms'
+        | 'select-bathrooms'
+        | 'set-price'
+        | 'set-maintenanceFee'
+      payload: number
+    }
 
 export const formReducer = (
   state = initialState,
-  action: Action | ActionWithStringPayload | ActionWithNumberPayload,
+  action: ActionWithPayload,
 ) => {
-  const {
-    itemType,
-    address,
-    rooms,
-    bathrooms,
-    parking,
-    options,
-    detail,
-    price,
-  } = state
+  const { options } = state
 
   switch (action.type) {
     default:
@@ -77,8 +81,17 @@ export const formReducer = (
     case 'select-type': {
       return { ...state, itemType: action.payload }
     }
-    case 'select-address': {
+    case 'research-address': {
       return { ...state, address: action.payload }
+    }
+    case 'research-zipcode': {
+      return { ...state, zipcode: action.payload }
+    }
+    case 'research-longitude': {
+      return { ...state, longitude: action.payload }
+    }
+    case 'research-latitude': {
+      return { ...state, latitude: action.payload }
     }
     case 'select-rooms': {
       if (action.payload <= 0 || action.payload > 10) {
@@ -93,7 +106,7 @@ export const formReducer = (
       return { ...state, bathrooms: action.payload }
     }
     case 'select-parking': {
-      return { ...state, parking: !parking }
+      return { ...state, parking: JSON.parse(action.payload) as boolean }
     }
     case 'select-options': {
       for (const key of Object.keys(options)) {

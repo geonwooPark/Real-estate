@@ -1,10 +1,11 @@
 import React, { Dispatch } from 'react'
 import DaumPostcode from 'react-daum-postcode'
-import { ActionWithStringPayload } from '../reducers/formReducer'
+import { ActionWithPayload } from '../reducers/formReducer'
+import axios from 'axios'
 
 interface ResearchAddressProps {
   setShowResearchAddress: React.Dispatch<React.SetStateAction<boolean>>
-  dispatch: Dispatch<ActionWithStringPayload>
+  dispatch: Dispatch<ActionWithPayload>
 }
 
 export default function ResearchAddress({
@@ -20,9 +21,23 @@ export default function ResearchAddress({
     >
       <div>
         <DaumPostcode
-          onComplete={(data) => {
+          onComplete={async (data) => {
             setShowResearchAddress(false)
-            dispatch({ type: 'select-address', payload: data.address })
+            dispatch({ type: 'research-address', payload: data.address })
+            dispatch({ type: 'research-zipcode', payload: data.zonecode })
+            const placeAddress = data.address
+            await axios({
+              url:
+                'https://dapi.kakao.com/v2/local/search/address.json?query=' +
+                placeAddress,
+              headers: {
+                Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_API_KEY}`,
+              },
+            }).then((result) => {
+              const { x, y } = result.data.documents[0]
+              dispatch({ type: 'research-latitude', payload: y })
+              dispatch({ type: 'research-longitude', payload: x })
+            })
           }}
         />
       </div>

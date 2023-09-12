@@ -10,7 +10,7 @@ import Header from './components/Header'
 import PrivateRoute from './components/PrivateRoute'
 import CreateListing from './pages/CreateListing'
 
-function App() {
+export default function App() {
   return (
     <>
       <Router>
@@ -30,5 +30,3 @@ function App() {
     </>
   )
 }
-
-export default App
