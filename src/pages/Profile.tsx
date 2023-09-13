@@ -140,10 +140,10 @@ export default function Profile() {
         </div>
       </section>
       <section className="max-w-6xl px-4 mx-auto">
-        <h4 className="text-center mb-6">나의 매물 목록</h4>
+        <h4 className="text-center mb-0">나의 매물 목록</h4>
         {!loading && listings.length > 0 && (
           <>
-            <ul>
+            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6 mb-6">
               {listings.map((listing) => (
                 <ListingItem
                   key={listing.id}

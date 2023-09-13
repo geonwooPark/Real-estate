@@ -21,10 +21,6 @@
     @apply w-full flex items-center justify-center h-12 px-7 py-3 text-sm font-medium rounded transition duration-200 ease-in-out;
   }
 
-  .btn1 {
-    @apply rounded transition duration-200 ease-in-out;
-  }
-
   .btn-primary {
     @apply btn bg-blue-600 text-white hover:bg-blue-500  active:bg-blue-800 disabled:bg-gray-400;
   }

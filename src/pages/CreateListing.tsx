@@ -37,6 +37,9 @@ export default function CreateListing() {
       if (state.address === '') {
         throw new Error('주소를 입력해주세요.')
       }
+      if (state.area === 0) {
+        throw new Error('전용면적을 입력해주세요.')
+      }
       if (state.price === 0) {
         throw new Error('가격을 입력해주세요.')
       }
@@ -122,7 +125,7 @@ export default function CreateListing() {
         <form onSubmit={onSubmit} className="mb-6">
           {/* 사진 업로드 */}
           <h4 className="mb-0">
-            매물 사진{' '}
+            매물 사진<span className="text-red-600">*</span>{' '}
             <small className="text-xs text-gray-700 font-normal ml-1">
               이미지는 최대 9개까지 첨부 가능합니다.
             </small>
@@ -192,7 +195,9 @@ export default function CreateListing() {
             )}
           </div>
           {/* 유형 선택 */}
-          <h4>매물 유형</h4>
+          <h4>
+            매물 유형<span className="text-red-600">*</span>
+          </h4>
           <div className="flex space-x-4">
             <Button
               type="button"
@@ -220,7 +225,9 @@ export default function CreateListing() {
             </Button>
           </div>
           {/* 주소 선택 */}
-          <h4>주소</h4>
+          <h4>
+            주소<span className="text-red-600">*</span>
+          </h4>
           <div className="flex">
             <input
               className="input w-20 px-2 mr-2 text-center"
@@ -249,10 +256,33 @@ export default function CreateListing() {
               setShowResearchAddress={setShowResearchAddress}
             />
           )}
+          {/* 평수 */}
+          <h4 className="inline-block">
+            전용면적<span className="text-red-600">*</span>
+          </h4>
+          <div className="flex items-center">
+            <input
+              type="number"
+              value={state.area.toString()}
+              required
+              className="input text-center"
+              onChange={(e) => {
+                dispatch({
+                  type: 'set-area',
+                  payload: e.target.valueAsNumber,
+                })
+              }}
+            />
+            <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
+              평 / {state.area ? (state.area * 3.3058).toFixed(2) : 0}㎡
+            </p>
+          </div>
           {/* 방 갯수 선택 */}
           <div className="flex space-x-4 mt-6">
             <div>
-              <h4 className="mt-0">방</h4>
+              <h4 className="mt-0">
+                방<span className="text-red-600">*</span>
+              </h4>
               <input
                 type="number"
                 value={state.rooms.toString()}
@@ -270,7 +300,9 @@ export default function CreateListing() {
             </div>
             {/* 욕실 갯수 선택 */}
             <div>
-              <h4 className="mt-0">욕실</h4>
+              <h4 className="mt-0">
+                욕실<span className="text-red-600">*</span>
+              </h4>
               <input
                 type="number"
                 value={state.bathrooms.toString()}
@@ -288,7 +320,9 @@ export default function CreateListing() {
             </div>
           </div>
           {/* 주차 여부 선택 */}
-          <h4>주차</h4>
+          <h4>
+            주차<span className="text-red-600">*</span>
+          </h4>
           <div className="flex space-x-4">
             <Button
               type="button"
@@ -396,6 +430,7 @@ export default function CreateListing() {
               : state.itemType === '전세'
               ? '전세금'
               : '보증금'}
+            <span className="text-red-600">*</span>
           </h4>
           <div className="flex items-center relative">
             <input
@@ -466,7 +501,6 @@ export default function CreateListing() {
           <input
             type="date"
             value={state.availableDate}
-            required
             className="input text-center"
             onChange={(e) => {
               dispatch({
@@ -476,7 +510,9 @@ export default function CreateListing() {
             }}
           />
           {/* 상세설명 작성 */}
-          <h4>상세설명</h4>
+          <h4>
+            상세설명<span className="text-red-600">*</span>
+          </h4>
           <textarea
             cols={30}
             rows={10}

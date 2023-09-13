@@ -2,8 +2,10 @@ export type InitialState = {
   itemType: '매매' | '전세' | '월세'
   address: string
   zipcode: string
+  roadName: string
   latitude: string
   longitude: string
+  area: number
   rooms: number
   bathrooms: number
   parking: boolean
@@ -21,8 +23,10 @@ export const initialState: InitialState = {
   itemType: '매매',
   address: '',
   zipcode: '',
+  roadName: '',
   latitude: '',
   longitude: '',
+  area: 0,
   rooms: 1,
   bathrooms: 1,
   parking: false,
@@ -54,6 +58,7 @@ export type ActionWithPayload =
       type:
         | 'research-address'
         | 'research-zipcode'
+        | 'research-roadName'
         | 'research-latitude'
         | 'research-longitude'
         | 'select-parking'
@@ -69,6 +74,7 @@ export type ActionWithPayload =
         | 'set-price'
         | 'set-monthly'
         | 'set-maintenanceFee'
+        | 'set-area'
       payload: number
     }
 
@@ -90,11 +96,17 @@ export const formReducer = (
     case 'research-zipcode': {
       return { ...state, zipcode: action.payload }
     }
+    case 'research-roadName': {
+      return { ...state, roadName: action.payload }
+    }
     case 'research-longitude': {
       return { ...state, longitude: action.payload }
     }
     case 'research-latitude': {
       return { ...state, latitude: action.payload }
+    }
+    case 'set-area': {
+      return { ...state, area: Number(action.payload.toFixed(2)) }
     }
     case 'select-rooms': {
       if (action.payload <= 0 || action.payload > 10) {

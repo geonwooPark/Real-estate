@@ -25,6 +25,7 @@ export default function ResearchAddress({
             setShowResearchAddress(false)
             dispatch({ type: 'research-address', payload: data.address })
             dispatch({ type: 'research-zipcode', payload: data.zonecode })
+            dispatch({ type: 'research-roadName', payload: data.query })
             const placeAddress = data.address
             await axios({
               url:
