@@ -22,7 +22,7 @@ export default function Header() {
 
   return (
     <div className="bg-white border-b sticky top-0 z-50">
-      <header className="flex flex-col justify-between px-3 sm:max-w-6xl sm:mx-auto sm:flex-row">
+      <header className="flex flex-col justify-between px-4 sm:max-w-6xl sm:mx-auto sm:flex-row">
         <div className="border-b sm:border-none">
           <img
             src="https://static.rdc.moveaws.com/images/logos/rdc-logo-default.svg"

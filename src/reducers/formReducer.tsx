@@ -1,5 +1,5 @@
 export type InitialState = {
-  itemType: 'sale' | 'jeonse' | 'monthly'
+  itemType: '매매' | '전세' | '월세'
   address: string
   zipcode: string
   latitude: string
@@ -12,12 +12,13 @@ export type InitialState = {
   }
   detail: string
   price: number
+  monthly: number
   maintenanceFee: number
   availableDate: string
 }
 
 export const initialState: InitialState = {
-  itemType: 'sale',
+  itemType: '매매',
   address: '',
   zipcode: '',
   latitude: '',
@@ -39,6 +40,7 @@ export const initialState: InitialState = {
   },
   detail: '',
   price: 0,
+  monthly: 0,
   maintenanceFee: 0,
   availableDate: '',
 }
@@ -46,7 +48,7 @@ export const initialState: InitialState = {
 export type ActionWithPayload =
   | {
       type: 'select-type'
-      payload: 'sale' | 'jeonse' | 'monthly'
+      payload: '매매' | '전세' | '월세'
     }
   | {
       type:
@@ -65,6 +67,7 @@ export type ActionWithPayload =
         | 'select-rooms'
         | 'select-bathrooms'
         | 'set-price'
+        | 'set-monthly'
         | 'set-maintenanceFee'
       payload: number
     }
@@ -130,6 +133,12 @@ export const formReducer = (
         return state
       }
       return { ...state, maintenanceFee: action.payload }
+    }
+    case 'set-monthly': {
+      if (action.payload < 0) {
+        return state
+      }
+      return { ...state, monthly: action.payload }
     }
     case 'select-availableDate': {
       return { ...state, availableDate: action.payload }

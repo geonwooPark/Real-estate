@@ -196,29 +196,25 @@ export default function CreateListing() {
           <div className="flex space-x-4">
             <Button
               type="button"
-              level={state.itemType === 'sale' ? 'ghost' : 'outline'}
+              level={state.itemType === '매매' ? 'ghost' : 'outline'}
               size="m"
-              onClick={() => dispatch({ type: 'select-type', payload: 'sale' })}
+              onClick={() => dispatch({ type: 'select-type', payload: '매매' })}
             >
               매매
             </Button>
             <Button
               type="button"
-              level={state.itemType === 'jeonse' ? 'ghost' : 'outline'}
+              level={state.itemType === '전세' ? 'ghost' : 'outline'}
               size="m"
-              onClick={() =>
-                dispatch({ type: 'select-type', payload: 'jeonse' })
-              }
+              onClick={() => dispatch({ type: 'select-type', payload: '전세' })}
             >
               전세
             </Button>
             <Button
               type="button"
-              level={state.itemType === 'monthly' ? 'ghost' : 'outline'}
+              level={state.itemType === '월세' ? 'ghost' : 'outline'}
               size="m"
-              onClick={() =>
-                dispatch({ type: 'select-type', payload: 'monthly' })
-              }
+              onClick={() => dispatch({ type: 'select-type', payload: '월세' })}
             >
               월세
             </Button>
@@ -394,7 +390,13 @@ export default function CreateListing() {
             </OptionBtn>
           </div>
           {/* 가격 설정 */}
-          <h4>매물가</h4>
+          <h4>
+            {state.itemType === '매매'
+              ? '매물가'
+              : state.itemType === '전세'
+              ? '전세금'
+              : '보증금'}
+          </h4>
           <div className="flex items-center relative">
             <input
               type="number"
@@ -408,31 +410,56 @@ export default function CreateListing() {
                 })
               }}
             />
-            <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
-              만원 <span>{state.itemType === 'monthly' && '/ 월'}</span>
-            </p>
+            <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">만원</p>
             <small className="absolute right-0 top-14">
               {state.price ? numberToKorean(state.price) + '원' : ''}
             </small>
           </div>
-          {/* 관리비 */}
-          <p className="text-lg mt-6 font-semibold">관리비</p>
-          <div className="flex items-center relative">
-            <input
-              type="number"
-              value={state.maintenanceFee.toString()}
-              required
-              className="input text-center"
-              onChange={(e) => {
-                dispatch({
-                  type: 'set-maintenanceFee',
-                  payload: e.target.valueAsNumber,
-                })
-              }}
-            />
-            <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
-              만원 / 월
-            </p>
+          <div className="flex space-x-4 mt-6">
+            {/* 월세 */}
+            {state.itemType === '월세' && (
+              <div>
+                <h4 className="mt-0">월세</h4>
+                <div className="flex items-center">
+                  <input
+                    type="number"
+                    value={state.monthly.toString()}
+                    required
+                    className="input w-full text-center"
+                    onChange={(e) => {
+                      dispatch({
+                        type: 'set-monthly',
+                        payload: e.target.valueAsNumber,
+                      })
+                    }}
+                  />
+                  <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
+                    만원
+                  </p>
+                </div>
+              </div>
+            )}
+            {/* 관리비 */}
+            <div>
+              <h4 className="mt-0">관리비</h4>
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  value={state.maintenanceFee.toString()}
+                  required
+                  className="input w-full text-center"
+                  onChange={(e) => {
+                    dispatch({
+                      type: 'set-maintenanceFee',
+                      payload: e.target.valueAsNumber,
+                    })
+                  }}
+                />
+                <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
+                  만원
+                </p>
+              </div>
+            </div>
           </div>
           {/* 입주 가능일 선택 */}
           <h4>입주 가능 날짜</h4>

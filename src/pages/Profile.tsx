@@ -1,12 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiOutlineEdit, AiOutlineHome } from 'react-icons/ai'
 import { auth, db } from '../firebase'
 import { initAlert } from './Signup'
 import { updateProfile } from 'firebase/auth'
-import { updateDoc, doc } from 'firebase/firestore'
+import {
+  updateDoc,
+  doc,
+  collection,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  DocumentData,
+} from 'firebase/firestore'
 import Toast from '../components/Toast'
 import Button from '../components/common/Button'
 import { useNavigate } from 'react-router'
+import ListingItem from '../components/ListingItem'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -14,6 +24,8 @@ export default function Profile() {
     name: auth.currentUser?.displayName,
     email: auth.currentUser?.email,
   })
+  const [listings, setListings] = useState<DocumentData[]>([])
+  const [loading, setLoading] = useState(false)
   const [alert, setAlert] = useState(initAlert)
   const [changeDetail, setChangeDetail] = useState(false)
   const { name, email } = formData
@@ -63,11 +75,30 @@ export default function Profile() {
     }
   }
 
+  useEffect(() => {
+    const fetchMyListings = async () => {
+      setLoading(true)
+      const q = query(
+        collection(db, 'listings'),
+        where('postedBy', '==', auth.currentUser?.uid),
+        orderBy('publishedAt', 'desc'),
+      )
+      const querySnap = await getDocs(q)
+      const listings: DocumentData[] = []
+      querySnap.forEach((doc) =>
+        listings.push({ id: doc.id, data: doc.data() }),
+      )
+      setListings(listings)
+    }
+    fetchMyListings()
+    setLoading(false)
+  }, [auth.currentUser?.uid])
+
   return (
     <>
-      <section className="max-w-6xl flex flex-col items-center mx-auto">
+      <section className="max-w-6xl px-4 mx-auto">
         <h1>내 프로필</h1>
-        <div className="w-full md:w-[50%] mt-6 px-3">
+        <div className="w-full sm:w-[50%] mt-6 mx-auto">
           <form>
             <div className="relative mb-3">
               <input
@@ -107,6 +138,22 @@ export default function Profile() {
             <AiOutlineHome size={20} className="mr-1" />내 매물 올리기
           </Button>
         </div>
+      </section>
+      <section className="max-w-6xl px-4 mx-auto">
+        <h4 className="text-center mb-6">나의 매물 목록</h4>
+        {!loading && listings.length > 0 && (
+          <>
+            <ul>
+              {listings.map((listing) => (
+                <ListingItem
+                  key={listing.id}
+                  id={listing.id}
+                  listing={listing.data}
+                />
+              ))}
+            </ul>
+          </>
+        )}
       </section>
       {alert.status !== 'pending' && (
         <Toast alert={alert} setAlert={setAlert} />
