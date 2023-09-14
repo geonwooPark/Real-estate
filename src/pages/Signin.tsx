@@ -18,7 +18,7 @@ export default function Signin() {
 
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [alert, setAlert] = useState(initAlert)
-  const [loading, setLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false)
   const { email, password } = formData
   const [showPassword, setShowPassword] = useState(false)
 
@@ -36,7 +36,7 @@ export default function Signin() {
       if (!password) {
         throw new Error('비밀번호를 입력하세요.')
       }
-      setLoading(true)
+      setBtnLoading(true)
       const result = await signInWithEmailAndPassword(auth, email, password)
       if (result.user) {
         setFormData({ email: '', password: '' })
@@ -50,7 +50,7 @@ export default function Signin() {
         })
       }
     } finally {
-      setLoading(false)
+      setBtnLoading(false)
     }
   }
 
@@ -150,7 +150,7 @@ export default function Signin() {
                 type="submit"
                 level="primary"
                 size="l"
-                disabled={loading}
+                disabled={btnLoading}
                 fullWidth={true}
               >
                 로그인

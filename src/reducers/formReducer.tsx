@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore'
+
 export type InitialState = {
   itemType: '매매' | '전세' | '월세'
   address: string
@@ -17,6 +19,14 @@ export type InitialState = {
   monthly: number
   maintenanceFee: number
   availableDate: string
+  images?: {
+    url: string
+    path: string
+  }[]
+
+  publishedAt?: Timestamp
+  postedBy?: string
+  id?: string
 }
 
 export const initialState: InitialState = {
@@ -47,6 +57,10 @@ export const initialState: InitialState = {
   monthly: 0,
   maintenanceFee: 0,
   availableDate: '',
+  images: undefined,
+  publishedAt: undefined,
+  postedBy: '',
+  id: '',
 }
 
 export type ActionWithPayload =
@@ -78,7 +92,7 @@ export type ActionWithPayload =
       payload: number
     }
   | {
-      type: 'edit-listing'
+      type: 'fetch-listing'
       payload: InitialState
     }
 
@@ -159,7 +173,7 @@ export const formReducer = (
     case 'select-availableDate': {
       return { ...state, availableDate: action.payload }
     }
-    case 'edit-listing': {
+    case 'fetch-listing': {
       return { ...action.payload }
     }
   }

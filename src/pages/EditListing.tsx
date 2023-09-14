@@ -15,6 +15,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useNavigate, useParams } from 'react-router'
 import { Imgs } from '../interfaces/interfaces'
+import Spinner from '../components/Spinner'
 
 export default function EditListing() {
   const params = useParams()
@@ -25,12 +26,13 @@ export default function EditListing() {
   const [images, setImages] = useState<File[]>([])
   const [showResearchAddress, setShowResearchAddress] = useState(false)
   const [alert, setAlert] = useState(initAlert)
-  const [loading, setLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false)
+  const [pageLoading, setPageLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
+    setBtnLoading(true)
 
     if (!listingId) {
       return
@@ -76,7 +78,7 @@ export default function EditListing() {
         })
       }
     } finally {
-      setLoading(false)
+      setBtnLoading(false)
     }
   }
 
@@ -115,6 +117,7 @@ export default function EditListing() {
 
   useEffect(() => {
     const fetchListing = async () => {
+      setPageLoading(true)
       if (!listingId) {
         return
       }
@@ -127,15 +130,16 @@ export default function EditListing() {
 
       if (docSnap.exists()) {
         const listing: any = { ...docSnap.data() }
-        delete listing.images
-        delete listing.publishedAt
-        delete listing.postedBy
-        delete listing.adId
-        dispatch({ type: 'edit-listing', payload: listing })
+        dispatch({ type: 'fetch-listing', payload: listing })
+        setPageLoading(false)
       }
     }
     fetchListing()
   }, [listingId])
+
+  if (pageLoading) {
+    return <Spinner />
+  }
 
   return (
     <>
@@ -550,7 +554,7 @@ export default function EditListing() {
             type="submit"
             level="primary"
             size="l"
-            disabled={loading}
+            disabled={btnLoading}
             fullWidth={true}
           >
             매물 수정하기

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { AiOutlineEdit, AiOutlineHome } from 'react-icons/ai'
 import { auth, db } from '../firebase'
 import { initAlert } from './Signup'
@@ -15,10 +15,11 @@ import {
 } from 'firebase/firestore'
 import Toast from '../components/Toast'
 import Button from '../components/common/Button'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import ListingItem from '../components/ListingItem'
 
 export default function Profile() {
+  const location = useLocation()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName,

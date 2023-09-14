@@ -23,12 +23,12 @@ export default function CreateListing() {
   const [images, setImages] = useState<File[]>([])
   const [showResearchAddress, setShowResearchAddress] = useState(false)
   const [alert, setAlert] = useState(initAlert)
-  const [loading, setLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
+    setBtnLoading(true)
 
     try {
       if (fileURLs.length === 0) {
@@ -66,7 +66,7 @@ export default function CreateListing() {
       await setDoc(
         doc(db, 'listings', result.id),
         {
-          adId: result.id,
+          id: result.id,
         },
         { merge: true },
       )
@@ -84,7 +84,7 @@ export default function CreateListing() {
         })
       }
     } finally {
-      setLoading(false)
+      setBtnLoading(false)
     }
   }
 
@@ -534,7 +534,7 @@ export default function CreateListing() {
             type="submit"
             level="primary"
             size="l"
-            disabled={loading}
+            disabled={btnLoading}
             fullWidth={true}
           >
             매물 등록

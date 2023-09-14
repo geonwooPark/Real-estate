@@ -9,7 +9,7 @@ import Button from '../components/common/Button'
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
   const [alert, setAlert] = useState(initAlert)
-  const [loading, setLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -23,7 +23,7 @@ export default function ForgotPassword() {
       if (!email) {
         throw new Error('이메일을 입력하세요.')
       }
-      setLoading(true)
+      setBtnLoading(true)
       await sendPasswordResetEmail(auth, email)
       setAlert({
         status: 'success',
@@ -38,7 +38,7 @@ export default function ForgotPassword() {
       }
     } finally {
       setEmail('')
-      setLoading(false)
+      setBtnLoading(false)
     }
   }
 
@@ -80,7 +80,7 @@ export default function ForgotPassword() {
                 type="submit"
                 level="primary"
                 size="l"
-                disabled={loading}
+                disabled={btnLoading}
                 fullWidth={true}
               >
                 비밀번호 재설정 메일 보내기
