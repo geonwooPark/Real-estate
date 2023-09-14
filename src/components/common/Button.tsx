@@ -30,6 +30,7 @@ type ButtonProps = (
       size: keyof typeof btnSize
     }
 ) & {
+  className?: string
   fullWidth?: boolean
   disabled?: boolean
   withIcon?: boolean
@@ -41,6 +42,7 @@ export default function Button({
   type,
   level,
   size,
+  className,
   disabled = false,
   withIcon = false,
   fullWidth = false,
@@ -53,7 +55,7 @@ export default function Button({
       onClick={onClick}
       className={`${btnSize[size]} ${btnLevel[level]} ${
         withIcon && 'flex justify-center items-center'
-      } ${fullWidth && '!w-full'}`}
+      } ${fullWidth && '!w-full'} ${className}`}
     >
       <>
         {disabled ? (

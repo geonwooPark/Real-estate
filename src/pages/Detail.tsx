@@ -1,11 +1,18 @@
 import { deleteDoc, doc, getDoc } from 'firebase/firestore'
 import React, { useEffect, useReducer, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import { db } from '../firebase'
+import { auth, db } from '../firebase'
 import { formReducer, initialState } from '../reducers/formReducer'
 import Spinner from '../components/Spinner'
 import Carousel from '../components/Carousel'
 import { BsShare } from 'react-icons/bs'
+import { numberToKorean } from '../utils/numberToKorean'
+import Moment from 'react-moment'
+import Button from '../components/common/Button'
+import { AiOutlineCalendar, AiOutlinePushpin } from 'react-icons/ai'
+import { BiArea } from 'react-icons/bi'
+import { RiParkingBoxLine } from 'react-icons/ri'
+import { MdOutlineSensorDoor } from 'react-icons/md'
 
 export default function Detail() {
   const params = useParams()
@@ -19,9 +26,12 @@ export default function Detail() {
     if (!listingId) {
       return
     }
-    await deleteDoc(doc(db, 'listings', listingId))
-    await deleteDoc(doc(db, 'favorites', listingId))
-    navigate('/profile')
+    const confirm = window.confirm('해당 매물을 삭제 하시겠습니까?')
+    if (confirm) {
+      await deleteDoc(doc(db, 'listings', listingId))
+      await deleteDoc(doc(db, 'favorites', listingId))
+      navigate('/profile')
+    }
   }
 
   const onEdit = () => {
@@ -65,10 +75,92 @@ export default function Detail() {
             <BsShare size={20} className="text-gray-700" />
           </div>
         </div>
-        <div className="w-full md:w-[300px] lg:w-[400px]">
+        <div className="w-full md:w-[300px] lg:w-[400px] bg-white">
           <Carousel images={state.images} />
-          <button onClick={onDelete}>삭제</button>
-          <button onClick={onEdit}>수정</button>
+          <div className="p-4">
+            <div className="text-right text-gray-700 mb-1">
+              <small>
+                <Moment fromNow>{state.publishedAt?.toDate()}</Moment>
+              </small>
+            </div>
+            <p className="text-md mb-2 truncate">{state.roadName}</p>
+            <p
+              className={`text-lg font-semibold truncate ${
+                !state.maintenanceFee && 'mb-6'
+              }`}
+            >
+              {state.itemType === '매매'
+                ? `매매 ${numberToKorean(state.price)}`
+                : state.itemType === '전세'
+                ? `전세 ${numberToKorean(state.price)}`
+                : `월세 ${numberToKorean(state.price)} / ${numberToKorean(
+                    state.monthly,
+                  )}`}
+            </p>
+            {state.maintenanceFee ? (
+              <div className="mb-6">
+                <small>관리비 {state.maintenanceFee}만원</small>
+              </div>
+            ) : null}
+            <hr />
+            <ul className="mb-4 mt-4 text-sm">
+              <li className="py-3 flex">
+                <BiArea size={24} className="mr-1.5" />
+                전용 {state.area}평 ({(state.area * 3.3058).toFixed(2)}㎡)
+              </li>
+              <li className="py-3 flex">
+                <MdOutlineSensorDoor size={24} className="mr-1.5" />방{' '}
+                {state.rooms}개 / 욕실 {state.bathrooms}개
+              </li>
+              <li className="py-3 flex">
+                <RiParkingBoxLine size={24} className="mr-1.5" />
+                주차 {state.parking ? '가능' : '불가능'}
+              </li>
+              <li className="py-3 flex">
+                <AiOutlineCalendar size={24} className="mr-1.5" />
+                입주가능일 {state.availableDate ? state.availableDate : '미정'}
+              </li>
+            </ul>
+            <hr />
+            <ul className="mb-4 mt-4 text-sm">
+              {Object.keys(state.options).map((key) => {
+                if (state.options[key]) {
+                  return (
+                    <li key={key} className="py-3 flex">
+                      <AiOutlinePushpin size={24} className="mr-1.5" />
+                      {key}
+                    </li>
+                  )
+                }
+              })}
+            </ul>
+            <hr />
+            <p className="mb-8 mt-6">{state.detail}</p>
+            {state.postedBy === auth.currentUser?.uid && (
+              <div>
+                <Button
+                  className="mb-2"
+                  type="button"
+                  level="ghost"
+                  size="s"
+                  fullWidth={true}
+                  onClick={onEdit}
+                >
+                  수정
+                </Button>
+                <Button
+                  className="border-red-600 text-red-600"
+                  type="button"
+                  level="ghost"
+                  size="s"
+                  fullWidth={true}
+                  onClick={onDelete}
+                >
+                  삭제
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </main>
       {copyUrl && (

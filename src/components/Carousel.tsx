@@ -62,7 +62,7 @@ const SamplePrevArrow = (props: any) => {
         ...style,
         display: 'block',
         left: 10,
-        zIndex: 100,
+        zIndex: 10,
       }}
       onClick={onClick}
     />

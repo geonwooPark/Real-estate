@@ -47,7 +47,7 @@ export default function Profile() {
 
     try {
       if (auth.currentUser?.displayName !== name) {
-        const confirm = window.confirm('프로필 이름을 변경하시겠습니까?')
+        const confirm = window.confirm('프로필 이름을 변경 하시겠습니까?')
         if (confirm) {
           await updateProfile(auth.currentUser, {
             displayName: name,

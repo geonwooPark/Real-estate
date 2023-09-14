@@ -44,7 +44,7 @@ export default function ListingItem({ listing, id }: ListingItemProps) {
               욕실 {listing.bathrooms}
             </span>
           </div>
-          <small>
+          <small className="text-gray-700">
             <Moment fromNow>{listing.publishedAt.toDate()}</Moment>
           </small>
         </div>
