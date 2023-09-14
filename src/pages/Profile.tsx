@@ -90,6 +90,7 @@ export default function Profile() {
       )
       setListings(listings)
     }
+
     fetchMyListings()
     setLoading(false)
   }, [auth.currentUser?.uid])
@@ -126,23 +127,23 @@ export default function Profile() {
               disabled
               className="w-full px-4 py-2 mb-3 text-sm text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out"
             />
+            <Button
+              type="button"
+              level="primary"
+              size="l"
+              withIcon={true}
+              fullWidth={true}
+              onClick={() => navigate('/create-listing')}
+            >
+              <AiOutlineHome size={20} className="mr-1" />내 매물 등록하기
+            </Button>
           </form>
-          <Button
-            type="button"
-            level="primary"
-            size="l"
-            withIcon={true}
-            fullWidth={true}
-            onClick={() => navigate('/create-listing')}
-          >
-            <AiOutlineHome size={20} className="mr-1" />내 매물 올리기
-          </Button>
         </div>
       </section>
       <section className="max-w-6xl px-4 mx-auto">
         <h4 className="text-center mb-0">나의 매물 목록</h4>
-        {!loading && listings.length > 0 && (
-          <>
+        <>
+          {!loading && listings.length > 0 && (
             <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6 mb-6">
               {listings.map((listing) => (
                 <ListingItem
@@ -152,8 +153,8 @@ export default function Profile() {
                 />
               ))}
             </ul>
-          </>
-        )}
+          )}
+        </>
       </section>
       {alert.status !== 'pending' && (
         <Toast alert={alert} setAlert={setAlert} />

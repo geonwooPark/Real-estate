@@ -6,7 +6,6 @@ import { auth, db } from '../firebase'
 import { Timestamp, doc, setDoc } from 'firebase/firestore'
 import Toast from '../components/Toast'
 import { Alert } from '../interfaces/interfaces'
-import spinner from '../assets/svg/spinner.svg'
 import Button from '../components/common/Button'
 
 export const initAlert: Alert = { status: 'pending', message: '' }

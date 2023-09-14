@@ -46,12 +46,12 @@ export default function Header() {
                 </li>
                 <li
                   className={`cursor-pointer py-3 text-sm text-gray-400 border-b-[3px] border-b-transparent ${
-                    pathMatchRoute('/offers') &&
+                    pathMatchRoute('/create-listing') &&
                     'sm:border-b-red-400 !text-black'
                   }`}
-                  onClick={() => navigate('/offers')}
+                  onClick={() => navigate('/create-listing')}
                 >
-                  상품등록
+                  매물등록
                 </li>
                 <li className="py-3 text-sm border-b-[3px] border-b-transparent">
                   <button

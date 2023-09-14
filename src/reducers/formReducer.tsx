@@ -77,6 +77,10 @@ export type ActionWithPayload =
         | 'set-area'
       payload: number
     }
+  | {
+      type: 'edit-listing'
+      payload: InitialState
+    }
 
 export const formReducer = (
   state = initialState,
@@ -154,6 +158,9 @@ export const formReducer = (
     }
     case 'select-availableDate': {
       return { ...state, availableDate: action.payload }
+    }
+    case 'edit-listing': {
+      return { ...action.payload }
     }
   }
 }

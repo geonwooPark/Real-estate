@@ -4,7 +4,6 @@ import { initAlert } from './Signup'
 import Toast from '../components/Toast'
 import { auth } from '../firebase'
 import { sendPasswordResetEmail } from 'firebase/auth'
-import spinner from '../assets/svg/spinner.svg'
 import Button from '../components/common/Button'
 
 export default function ForgotPassword() {

@@ -4,12 +4,12 @@ import Home from './pages/Home'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
-import Offers from './pages/Offers'
 import ForgotPassword from './pages/ForgotPassword'
 import Header from './components/Header'
 import PrivateRoute from './components/PrivateRoute'
 import CreateListing from './pages/CreateListing'
-
+import Detail from './pages/Detail'
+import EditListing from './pages/EditListing'
 export default function App() {
   return (
     <>
@@ -19,12 +19,13 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
-            <Route path="/offers" element={<Offers />} />
             <Route path="/create-listing" element={<CreateListing />} />
+            <Route path="/edit-listing/:listingId" element={<EditListing />} />
           </Route>
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path={`/category/:category/:listingId`} element={<Detail />} />
         </Routes>
       </Router>
     </>

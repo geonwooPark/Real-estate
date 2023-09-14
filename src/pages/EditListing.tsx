@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useTransition } from 'react'
+import React, { useEffect, useReducer, useState, useTransition } from 'react'
 import { TbAirConditioning } from 'react-icons/tb'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import { AiOutlinePlus } from 'react-icons/ai'
@@ -12,11 +12,13 @@ import Button from '../components/common/Button'
 import spinner from '../assets/svg/spinner.svg'
 import { auth, db, storage } from '../firebase'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { Timestamp, addDoc, collection, doc, setDoc } from 'firebase/firestore'
-import { useNavigate } from 'react-router'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { useNavigate, useParams } from 'react-router'
 import { Imgs } from '../interfaces/interfaces'
 
-export default function CreateListing() {
+export default function EditListing() {
+  const params = useParams()
+  const { listingId } = params
   const navigate = useNavigate()
   const [state, dispatch] = useReducer(formReducer, initialState)
   const [fileURLs, setfileURLs] = useState<string[]>([])
@@ -29,6 +31,10 @@ export default function CreateListing() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
+
+    if (!listingId) {
+      return
+    }
 
     try {
       if (fileURLs.length === 0) {
@@ -56,23 +62,9 @@ export default function CreateListing() {
         imgs.push({ url: fileUrl, path: result.ref.fullPath })
       }
 
-      const result = await addDoc(collection(db, 'listings'), {
+      await updateDoc(doc(db, 'listings', listingId), {
         ...state,
         images: imgs,
-        publishedAt: Timestamp.fromDate(new Date()),
-        postedBy: auth.currentUser?.uid,
-      })
-
-      await setDoc(
-        doc(db, 'listings', result.id),
-        {
-          adId: result.id,
-        },
-        { merge: true },
-      )
-
-      await setDoc(doc(db, 'favorites', result.id), {
-        users: [],
       })
 
       navigate(`/profile`)
@@ -121,10 +113,34 @@ export default function CreateListing() {
     }
   }
 
+  useEffect(() => {
+    const fetchListing = async () => {
+      if (!listingId) {
+        return
+      }
+      const docSnap = await getDoc(doc(db, 'listings', listingId))
+
+      if (docSnap.data()?.postedBy !== auth.currentUser?.uid) {
+        navigate('/')
+        return
+      }
+
+      if (docSnap.exists()) {
+        const listing: any = { ...docSnap.data() }
+        delete listing.images
+        delete listing.publishedAt
+        delete listing.postedBy
+        delete listing.adId
+        dispatch({ type: 'edit-listing', payload: listing })
+      }
+    }
+    fetchListing()
+  }, [listingId])
+
   return (
     <>
       <main className="max-w-md mx-auto px-4">
-        <h1>매물 올리기</h1>
+        <h1>매물 수정하기</h1>
         <form onSubmit={onSubmit} className="mb-6">
           {/* 사진 업로드 */}
           <h4 className="mb-0">
@@ -537,7 +553,7 @@ export default function CreateListing() {
             disabled={loading}
             fullWidth={true}
           >
-            매물 등록
+            매물 수정하기
           </Button>
         </form>
       </main>
