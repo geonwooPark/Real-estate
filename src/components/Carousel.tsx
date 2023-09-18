@@ -26,15 +26,12 @@ export default function Carousel({ images }: any) {
   return (
     <Slider
       {...settings}
-      className="bg-red-400 md:h-[200px] lg:h-[300px] overflow-hidden"
+      className="bg-red-400 h-[300px] md:h-[200px] lg:h-[300px] overflow-hidden"
     >
       {images.map((image: any, i: number) => {
         return (
           <div key={i}>
-            <img
-              src={image.url}
-              className="w-full h-[400px] object-cover"
-            ></img>
+            <img src={image.url} className="w-full h-full object-cover"></img>
           </div>
         )
       })}
