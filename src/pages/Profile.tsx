@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiOutlineEdit, AiOutlineHome } from 'react-icons/ai'
 import { auth, db } from '../firebase'
 import { initAlert } from './Signup'
@@ -12,24 +12,30 @@ import {
   orderBy,
   getDocs,
   DocumentData,
+  limit,
+  startAfter,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore'
 import Toast from '../components/Toast'
 import Button from '../components/common/Button'
-import { useLocation, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import ListingItem from '../components/ListingItem'
 
 export default function Profile() {
-  const location = useLocation()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName,
     email: auth.currentUser?.email,
   })
-  const [listings, setListings] = useState<DocumentData[]>([])
-  const [loading, setLoading] = useState(false)
-  const [alert, setAlert] = useState(initAlert)
-  const [changeDetail, setChangeDetail] = useState(false)
   const { name, email } = formData
+  const [changeDetail, setChangeDetail] = useState(false)
+
+  const [listings, setListings] = useState<DocumentData[]>([])
+  const [lastFetchedListing, setLastFetchedListing] =
+    useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null)
+  const [pageLoading, setPageLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false)
+  const [alert, setAlert] = useState(initAlert)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -78,23 +84,61 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchMyListings = async () => {
-      setLoading(true)
+      try {
+        setPageLoading(true)
+        const q = query(
+          collection(db, 'listings'),
+          where('postedBy', '==', auth.currentUser?.uid),
+          orderBy('publishedAt', 'desc'),
+          limit(8),
+        )
+        const querySnap = await getDocs(q)
+        const lastVisible = querySnap.docs[querySnap.docs.length - 1]
+        setLastFetchedListing(lastVisible)
+        const listings: DocumentData[] = []
+        querySnap.forEach((doc) => listings.push(doc.data()))
+        setListings(listings)
+      } catch (error) {
+        if (error instanceof Error) {
+          setAlert({
+            status: 'error',
+            message: error.message,
+          })
+        }
+      } finally {
+        setPageLoading(false)
+      }
+    }
+    fetchMyListings()
+  }, [auth.currentUser?.uid])
+
+  const onFetchMore = async () => {
+    try {
+      setBtnLoading(true)
       const q = query(
         collection(db, 'listings'),
         where('postedBy', '==', auth.currentUser?.uid),
         orderBy('publishedAt', 'desc'),
+        startAfter(lastFetchedListing),
+        limit(8),
       )
       const querySnap = await getDocs(q)
+      const lastVisible = querySnap.docs[querySnap.docs.length - 1]
+      setLastFetchedListing(lastVisible)
       const listings: DocumentData[] = []
-      querySnap.forEach((doc) =>
-        listings.push({ id: doc.id, data: doc.data() }),
-      )
-      setListings(listings)
+      querySnap.forEach((doc) => listings.push(doc.data()))
+      setListings((prev) => [...prev, ...listings])
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlert({
+          status: 'error',
+          message: error.message,
+        })
+      }
+    } finally {
+      setBtnLoading(false)
     }
-
-    fetchMyListings()
-    setLoading(false)
-  }, [auth.currentUser?.uid])
+  }
 
   return (
     <>
@@ -143,19 +187,28 @@ export default function Profile() {
       </section>
       <section className="max-w-6xl px-4 mx-auto">
         <h4 className="text-center mb-0">나의 매물 목록</h4>
-        <>
-          {!loading && listings.length > 0 && (
+        <main>
+          {!pageLoading && listings.length > 0 && (
             <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6 mb-6">
               {listings.map((listing) => (
-                <ListingItem
-                  key={listing.id}
-                  id={listing.id}
-                  listing={listing.data}
-                />
+                <ListingItem key={listing.id} listing={listing} />
               ))}
             </ul>
           )}
-        </>
+        </main>
+        {lastFetchedListing && (
+          <div className="flex justify-center mb-4">
+            <Button
+              type="button"
+              level="outline"
+              size="s"
+              onClick={onFetchMore}
+              disabled={btnLoading}
+            >
+              더 보기
+            </Button>
+          </div>
+        )}
       </section>
       {alert.status !== 'pending' && (
         <Toast alert={alert} setAlert={setAlert} />
