@@ -34,17 +34,18 @@ export default function ChatRoom({
         setCurrentChatRoom(chatRoom)
       }}
     >
-      {chatRoom.other?.photo ? (
-        <img
-          src={chatRoom.other?.photo}
-          className="w-[50px] h-[50px] rounded-full object-fill"
-        />
-      ) : (
-        <div>
+      <div>
+        {chatRoom.other?.photoUrl ? (
+          <img
+            src={chatRoom.other?.photoUrl}
+            className="w-[50px] h-[50px] rounded-full object-fill"
+          />
+        ) : (
           <FaUserCircle size={50} className="w-[50px] h-[50px]" />
-        </div>
-      )}
-      <div className="ml-2 hidden sm:block truncate">
+        )}
+      </div>
+
+      <div className="flex-1 ml-2 hidden sm:block truncate">
         <p>{chatRoom.other?.name}</p>
         <small className="text-gray-500">{value?.lastText}</small>
       </div>

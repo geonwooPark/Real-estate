@@ -5,8 +5,8 @@ export type InitialState = {
   address: string
   zipcode: string
   roadName: string
-  latitude: string
-  longitude: string
+  latitude: number
+  longitude: number
   area: number
   rooms: number
   bathrooms: number
@@ -23,7 +23,6 @@ export type InitialState = {
     url: string
     path: string
   }[]
-
   publishedAt?: Timestamp
   postedBy?: string
   id?: string
@@ -34,8 +33,8 @@ export const initialState: InitialState = {
   address: '',
   zipcode: '',
   roadName: '',
-  latitude: '',
-  longitude: '',
+  latitude: 0,
+  longitude: 0,
   area: 0,
   rooms: 1,
   bathrooms: 1,
@@ -73,8 +72,6 @@ export type ActionWithPayload =
         | 'research-address'
         | 'research-zipcode'
         | 'research-roadName'
-        | 'research-latitude'
-        | 'research-longitude'
         | 'select-parking'
         | 'select-options'
         | 'write-detail'
@@ -83,6 +80,8 @@ export type ActionWithPayload =
     }
   | {
       type:
+        | 'research-latitude'
+        | 'research-longitude'
         | 'select-rooms'
         | 'select-bathrooms'
         | 'set-price'
@@ -124,6 +123,9 @@ export const formReducer = (
       return { ...state, latitude: action.payload }
     }
     case 'set-area': {
+      if (action.payload < 0) {
+        return state
+      }
       return { ...state, area: Number(action.payload.toFixed(2)) }
     }
     case 'select-rooms': {

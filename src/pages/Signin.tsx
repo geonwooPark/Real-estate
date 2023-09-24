@@ -66,6 +66,8 @@ export default function Signin() {
           uid: result.user.uid,
           name: result.user.displayName,
           email: result.user.email,
+          photoUrl: result.user.photoURL,
+          photoPath: '',
           createdAt: Timestamp.fromDate(new Date()),
         })
       }

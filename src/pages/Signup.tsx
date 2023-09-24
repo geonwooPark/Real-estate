@@ -51,10 +51,12 @@ export default function SignUp() {
         uid: result.user.uid,
         name,
         email,
+        photoUrl: result.user.photoURL,
+        photoPath: '',
         createdAt: Timestamp.fromDate(new Date()),
       })
       setFormData(initData)
-      navigate('/')
+      navigate('/', { replace: true })
     } catch (error) {
       if (error instanceof Error) {
         setAlert({
