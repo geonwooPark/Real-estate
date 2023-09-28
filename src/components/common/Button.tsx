@@ -11,7 +11,7 @@ const btnLevel = {
   primary:
     'bg-blue-600 text-white rounded transition duration-200 ease-in-out hover:bg-blue-500 active:bg-blue-800 disabled:bg-gray-400',
   secondary:
-    'bg-white rounded transition duration-200 ease-in-out hover:bg-gray-200 active:bg-gray-300 disabled:bg-gray-400',
+    'bg-gray-200 rounded transition duration-200 ease-in-out hover:bg-gray-100 active:bg-gray-300 disabled:bg-gray-400',
   ghost:
     'border border-blue-600 text-blue-600 rounded transition duration-200 ease-in-out',
   outline:

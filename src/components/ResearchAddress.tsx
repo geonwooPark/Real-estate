@@ -38,9 +38,10 @@ export default function ResearchAddress({
                 Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_API_KEY}`,
               },
             }).then((result) => {
-              const { x, y } = result.data.documents[0]
-              dispatch({ type: 'research-latitude', payload: y })
-              dispatch({ type: 'research-longitude', payload: x })
+              const { x, y }: { x: number; y: number } =
+                result.data.documents[0]
+              dispatch({ type: 'research-latitude', payload: Number(y) })
+              dispatch({ type: 'research-longitude', payload: Number(x) })
             })
           }}
         />

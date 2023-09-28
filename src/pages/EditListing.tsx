@@ -164,7 +164,7 @@ export default function EditListing() {
               </div>
             ) : (
               <>
-                <div className="bg-sky-100 min-h-[80px] pt-2.5 absolute left-0 top-0 z-10">
+                <div className="bg-white min-h-[80px] pt-2.5 absolute left-0 top-0 z-10">
                   <label
                     htmlFor="input-file"
                     className="text-blue-600 bg-white rounded border border-blue-600 text-md w-[70px] h-[70px] flex justify-center items-center cursor-pointer"

@@ -6,13 +6,16 @@ export default function useSnapShot<T>(collectionName: string, docId: string) {
   const [value, setValue] = useState<T | null>(null)
 
   useEffect(() => {
+    if (!docId) {
+      return
+    }
     const docRef = doc(db, collectionName, docId)
     const unsub = onSnapshot(docRef, (doc: DocumentData) => {
       setValue(doc.data())
     })
 
     return () => unsub()
-  }, [])
+  }, [docId])
 
   return { value }
 }

@@ -124,7 +124,7 @@ export default function CreateListing() {
   return (
     <>
       <main className="max-w-md mx-auto px-4">
-        <h1>매물 올리기</h1>
+        <h1>매물 등록</h1>
         <form onSubmit={onSubmit} className="mb-6">
           {/* 사진 업로드 */}
           <h4 className="mb-0">
@@ -144,7 +144,7 @@ export default function CreateListing() {
               </div>
             ) : (
               <>
-                <div className="bg-sky-100 min-h-[80px] pt-2.5 absolute left-0 top-0 z-10">
+                <div className="bg-white min-h-[80px] pt-2.5 absolute left-0 top-0 z-10">
                   <label
                     htmlFor="input-file"
                     className="text-blue-600 bg-white rounded border border-blue-600 text-md w-[70px] h-[70px] flex justify-center items-center cursor-pointer"

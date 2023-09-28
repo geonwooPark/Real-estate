@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-sky-100;
+    /* @apply bg-sky-100; */
   }
 
   h1 {
@@ -38,9 +38,15 @@
   }
 
   .input {
-    @apply px-4 py-3 text-sm text-gray-700 bg-white border-gray-300 rounded;
+    @apply px-4 py-3 text-sm text-gray-700 bg-white border border-gray-300 rounded;
   }
 }
 
 @layer utilities {
+  .hide-scroll {
+    -ms-overflow-style: none;
+  }
+  .hide-scroll::-webkit-scrollbar {
+    display: none;
+  }
 }

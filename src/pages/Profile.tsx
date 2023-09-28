@@ -1,26 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { AiOutlineEdit, AiOutlineHome, AiOutlinePlus } from 'react-icons/ai'
+import {
+  AiOutlineEdit,
+  AiOutlineHeart,
+  AiOutlineHome,
+  AiOutlinePlus,
+} from 'react-icons/ai'
 import { auth, db, storage } from '../firebase'
 import { initAlert } from './Signup'
 import { updateProfile } from 'firebase/auth'
-import {
-  updateDoc,
-  doc,
-  collection,
-  query,
-  where,
-  orderBy,
-  getDocs,
-  DocumentData,
-  limit,
-  startAfter,
-  QueryDocumentSnapshot,
-  getDoc,
-} from 'firebase/firestore'
+import { updateDoc, doc, getDoc } from 'firebase/firestore'
 import Toast from '../components/Toast'
 import Button from '../components/common/Button'
 import { useNavigate } from 'react-router'
-import ListingItem from '../components/ListingItem'
 import { FaUserCircle } from 'react-icons/fa'
 import {
   deleteObject,
@@ -28,6 +19,8 @@ import {
   ref,
   uploadBytes,
 } from 'firebase/storage'
+import { Link } from 'react-router-dom'
+import { BiBuildings } from 'react-icons/bi'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -38,12 +31,7 @@ export default function Profile() {
   const { name, email } = formData
   const [changeDetail, setChangeDetail] = useState(false)
 
-  const [listings, setListings] = useState<DocumentData[]>([])
-  const [lastFetchedListing, setLastFetchedListing] =
-    useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
-  const [pageLoading, setPageLoading] = useState(false)
-  const [btnLoading, setBtnLoading] = useState(false)
   const [alert, setAlert] = useState(initAlert)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,80 +104,24 @@ export default function Profile() {
     setImageFile(null)
   }
 
-  const fetchMyListings = async () => {
-    try {
-      setPageLoading(true)
-      const q = query(
-        collection(db, 'listings'),
-        where('postedBy', '==', auth.currentUser?.uid),
-        orderBy('publishedAt', 'desc'),
-        limit(8),
-      )
-      const querySnap = await getDocs(q)
-      const lastVisible = querySnap.docs[querySnap.docs.length - 1]
-      setLastFetchedListing(lastVisible)
-      const listings: DocumentData[] = []
-      querySnap.forEach((doc) => listings.push(doc.data()))
-      setListings(listings)
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
-      }
-    } finally {
-      setPageLoading(false)
-    }
-  }
-
   useEffect(() => {
     if (imageFile) {
       uploadImage()
     }
-    fetchMyListings()
   }, [imageFile])
-
-  const onFetchMore = async () => {
-    try {
-      setBtnLoading(true)
-      const q = query(
-        collection(db, 'listings'),
-        where('postedBy', '==', auth.currentUser?.uid),
-        orderBy('publishedAt', 'desc'),
-        startAfter(lastFetchedListing),
-        limit(8),
-      )
-      const querySnap = await getDocs(q)
-      const lastVisible = querySnap.docs[querySnap.docs.length - 1]
-      setLastFetchedListing(lastVisible)
-      const listings: DocumentData[] = []
-      querySnap.forEach((doc) => listings.push(doc.data()))
-      setListings((prev) => [...prev, ...listings])
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
-      }
-    } finally {
-      setBtnLoading(false)
-    }
-  }
 
   return (
     <>
       <section className="max-w-6xl px-4 mx-auto">
         <h1>내 프로필</h1>
-        <div className="w-full sm:w-[50%] mt-6 mx-auto flex">
-          <div className="relative rounded-full overflow-hidden cursor-pointer group">
+        <div className="w-full sm:w-[50%] mt-6 mx-auto">
+          <div className="w-[150px] mx-auto relative rounded-full mb-4 overflow-hidden cursor-pointer group">
             <>
               {auth.currentUser?.photoURL ? (
                 <img
                   src={auth.currentUser.photoURL}
                   alt="profile-image"
-                  className="w-[88px] h-[88px] object-fill transition duration-200 ease-in-out group-hover:brightness-75"
+                  className="w-[150px] h-[150px] object-cover transition duration-200 ease-in-out group-hover:brightness-75"
                 />
               ) : (
                 <FaUserCircle
@@ -218,14 +150,14 @@ export default function Profile() {
           </div>
 
           <form className="flex-1 ml-2">
-            <div className="relative mb-3">
+            <div className="relative mb-0.5">
               <input
                 type="text"
                 name="name"
                 value={name!}
                 disabled={!changeDetail}
                 onChange={onChange}
-                className={`w-full px-4 py-2 text-sm text-gray-700 bg-white border rounded transition ease-in-out outline-none ${
+                className={`w-full px-3 py-2 text-gray-700 bg-white border rounded transition ease-in-out outline-none ${
                   changeDetail ? 'border-gray-300' : 'border-white'
                 } ${changeDetail && 'bg-blue-100'}`}
               />
@@ -237,7 +169,7 @@ export default function Profile() {
                 }`}
               />
             </div>
-            <div className="w-full px-4 py-2 text-sm text-gray-700 bg-white">
+            <div className="w-full px-3 py-2 text-gray-700 bg-white">
               {email}
             </div>
           </form>
@@ -253,7 +185,21 @@ export default function Profile() {
           <AiOutlineHome size={20} className="mr-1" />내 매물 등록하기
         </Button>
       </section>
-      <section className="max-w-6xl px-4 mx-auto">
+      <ul className="max-w-6xl w-full sm:w-[50%] text-left mx-auto mt-6 px-4">
+        <Link to={'/profile/my-listings'}>
+          <li className="border-b py-2 flex items-center">
+            <BiBuildings size={20} className="mr-2" />
+            내가 올린 매물
+          </li>
+        </Link>
+        <Link to={'/profile/favorite-listings'}>
+          <li className="border-b py-2 flex items-center">
+            <AiOutlineHeart size={20} className="mr-2" />
+            관심 있는 매물
+          </li>
+        </Link>
+      </ul>
+      {/* <section className="max-w-6xl px-4 mx-auto">
         <h4 className="text-center mb-0">나의 매물 목록</h4>
         <main>
           {!pageLoading && listings.length > 0 && (
@@ -277,7 +223,7 @@ export default function Profile() {
             </Button>
           </div>
         )}
-      </section>
+      </section> */}
       {alert.status !== 'pending' && (
         <Toast alert={alert} setAlert={setAlert} />
       )}

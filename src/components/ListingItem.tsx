@@ -7,19 +7,18 @@ import 'moment/locale/ko'
 
 interface ListingItemProps {
   listing: DocumentData
-  id: string
 }
 
-export default function ListingItem({ listing, id }: ListingItemProps) {
+export default function ListingItem({ listing }: ListingItemProps) {
   return (
-    <li className="bg-white rounded overflow-hidden group mb-4 sm:mb-0">
-      <Link to={`/category/${listing.itemType}/${id}`}>
+    <li className="bg-white shadow-md rounded-xl overflow-hidden group mb-4 sm:mb-0">
+      <Link to={`/category/${listing.itemType}/${listing.id}`}>
         <div className="overflow-hidden">
           <img
             src={listing.images[0].url}
             alt="thumnail"
             loading="lazy"
-            className="w-full h-[170px] object-cover transition-scale duration-200 ease-in group-hover:scale-105"
+            className="w-full h-[240px] object-cover transition-scale duration-200 ease-in group-hover:scale-105"
           />
         </div>
         <div className="p-2.5">

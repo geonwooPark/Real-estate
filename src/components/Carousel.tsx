@@ -1,17 +1,13 @@
 import React from 'react'
-import Spinner from './Spinner'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 
-interface Images {
-  url: string
-  path: string
-}
-
 export default function Carousel({ images }: any) {
   if (!images) {
-    return <Spinner />
+    return (
+      <div className="bg-gray-300 h-[300px] md:h-[200px] lg:h-[300px] overflow-hidden"></div>
+    )
   }
   const settings = {
     dots: false,
@@ -24,13 +20,13 @@ export default function Carousel({ images }: any) {
   }
 
   return (
-    <Slider
-      {...settings}
-      className="bg-red-400 h-[300px] md:h-[200px] lg:h-[300px] overflow-hidden"
-    >
+    <Slider {...settings}>
       {images.map((image: any, i: number) => {
         return (
-          <div key={i}>
+          <div
+            key={i}
+            className="bg-gray-300 h-[300px] md:h-[200px] lg:h-[300px] overflow-hidden"
+          >
             <img src={image.url} className="w-full h-full object-cover"></img>
           </div>
         )
