@@ -2,7 +2,7 @@ import React from 'react'
 import { auth, db } from '../firebase'
 import { numberToKorean } from '../utils/numberToKorean'
 import Moment from 'react-moment'
-import Button from '../components/common/Button'
+import Button from './Button'
 import {
   AiFillHeart,
   AiOutlineCalendar,
@@ -101,7 +101,10 @@ export default function SideSlider({
           <AiOutlineClose size={20} />
         </div>
         <div className="md:h-[calc(100vh-48px-61px)] md:overflow-y-scroll hide-scroll">
-          <Carousel images={listing.images} />
+          <Carousel
+            images={listing.images}
+            className="bg-gray-300 h-[300px] md:h-[200px] lg:h-[300px] "
+          />
           <div className="p-4 relative">
             <div className="text-right text-gray-700 mb-1">
               <small>
@@ -169,51 +172,47 @@ export default function SideSlider({
           {listing.postedBy === auth.currentUser?.uid ? (
             <>
               <Button
+                label="수정하기"
                 type="button"
                 level="ghost"
                 size="s"
                 fullWidth={true}
                 onClick={editListing}
                 className="mr-2"
-              >
-                수정하기
-              </Button>
+              />
               <Button
+                label="삭제하기"
                 type="button"
                 level="ghost"
                 size="s"
                 fullWidth={true}
                 onClick={deleteListing}
                 className="border-red-600 text-red-600"
-              >
-                삭제하기
-              </Button>
+              />
             </>
           ) : (
             <>
               <Button
+                label=""
                 type="button"
                 level="ghost"
                 size="s"
-                withIcon
+                icon={
+                  value?.users.includes(auth.currentUser?.uid as string)
+                    ? AiFillHeart
+                    : AiOutlineHeart
+                }
                 className="mr-2"
                 onClick={likeListing}
-              >
-                {value?.users.includes(auth.currentUser?.uid as string) ? (
-                  <AiFillHeart size={20} className="text-red-400" />
-                ) : (
-                  <AiOutlineHeart size={20} />
-                )}
-              </Button>
+              />
               <Button
+                label="연락하기"
                 type="button"
                 level="primary"
                 size="s"
                 fullWidth={true}
                 onClick={startChat}
-              >
-                연락하기
-              </Button>
+              />
             </>
           )}
         </div>
