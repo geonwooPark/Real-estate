@@ -1,31 +1,33 @@
-import React, { Dispatch, PropsWithChildren } from 'react'
+import React, { Dispatch } from 'react'
 import { ActionWithPayload } from '../reducers/formReducer'
+import { IconType } from 'react-icons'
 
-interface OptionBtn {
+interface OptionBtnProps {
   dispatch: Dispatch<ActionWithPayload>
   option: boolean
-  name: string
+  label: string
+  icon: IconType
 }
 
 export default function OptionBtn({
-  children,
   dispatch,
   option,
-  name,
-}: PropsWithChildren<OptionBtn>) {
+  label,
+  icon: Icon,
+}: OptionBtnProps) {
   return (
     <button
       type="button"
-      name={name}
+      name={label}
       onClick={(e) =>
         dispatch({ type: 'select-options', payload: e.currentTarget.name })
       }
-      className={`${
-        option ? 'btn-ghost' : 'btn-outline'
-      } h-full px-2 pt-3 pb-2 text-xs flex-col`}
+      className={`
+      h-full px-2 pt-3 pb-2 flex flex-col items-center border border-gray-400 text-gray-800 rounded
+      ${option ? 'btn-ghost' : 'btn-outline'}`}
     >
-      {children}
-      {name}
+      <Icon size={20} className="mb-1" />
+      <div className="text-xs">{label}</div>
     </button>
   )
 }
