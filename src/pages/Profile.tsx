@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   AiOutlineEdit,
   AiOutlineHeart,
-  AiOutlineHome,
   AiOutlinePlus,
+  AiFillEdit,
 } from 'react-icons/ai'
+import { BiBuildings } from 'react-icons/bi'
+import { FaUserCircle } from 'react-icons/fa'
 import { auth, db, storage } from '../firebase'
-import { initAlert } from './Signup'
 import { updateProfile } from 'firebase/auth'
 import { updateDoc, doc, getDoc } from 'firebase/firestore'
-import Toast from '../components/Toast'
-import Button from '../components/common/Button'
-import { useNavigate } from 'react-router'
-import { FaUserCircle } from 'react-icons/fa'
 import {
   deleteObject,
   getDownloadURL,
@@ -20,26 +17,27 @@ import {
   uploadBytes,
 } from 'firebase/storage'
 import { Link } from 'react-router-dom'
-import { BiBuildings } from 'react-icons/bi'
+import Input from '../components/Input'
+import { ToastContext } from '../App'
+import Spinner from '../components/Spinner'
 
 export default function Profile() {
-  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName,
     email: auth.currentUser?.email,
   })
   const { name, email } = formData
   const [changeDetail, setChangeDetail] = useState(false)
-
   const [imageFile, setImageFile] = useState<File | null>(null)
-  const [alert, setAlert] = useState(initAlert)
+  const [imageLoading, setImageLoading] = useState(false)
+  const setAlert = useContext(ToastContext)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
   }
 
-  const onEdit = async () => {
+  const onNameEdit = async () => {
     setChangeDetail(!changeDetail)
     if (!changeDetail) {
       return
@@ -79,34 +77,49 @@ export default function Profile() {
     }
   }
 
-  const uploadImage = async () => {
+  const onImageEdit = async () => {
     if (!imageFile || !auth.currentUser) {
       return
     }
+    try {
+      setImageLoading(true)
+      const docSnap = await getDoc(doc(db, 'users', auth.currentUser.uid))
+      const user = docSnap.data()
+      if (user?.photoPath) {
+        await deleteObject(ref(storage, user.photoPath))
+      }
 
-    const docSnap = await getDoc(doc(db, 'users', auth.currentUser.uid))
-    const user = docSnap.data()
-    if (user?.photoPath) {
-      await deleteObject(ref(storage, user.photoPath))
+      const imgRef = ref(storage, `profile/${Date.now()} - ${user?.uid}`)
+
+      const result = await uploadBytes(imgRef, imageFile)
+      const url = await getDownloadURL(ref(storage, result.ref.fullPath))
+      await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+        photoUrl: url,
+        photoPath: result.ref.fullPath,
+      })
+      await updateProfile(auth.currentUser, {
+        photoURL: url,
+      })
+      setImageFile(null)
+      setAlert({
+        status: 'success',
+        message: '프로필 사진을 성공적으로 변경했습니다.',
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlert({
+          status: 'error',
+          message: '프로필 사진 변경에 실패했습니다.',
+        })
+      }
+    } finally {
+      setImageLoading(false)
     }
-
-    const imgRef = ref(storage, `profile/${Date.now()} - ${user?.uid}`)
-
-    const result = await uploadBytes(imgRef, imageFile)
-    const url = await getDownloadURL(ref(storage, result.ref.fullPath))
-    await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-      photoUrl: url,
-      photoPath: result.ref.fullPath,
-    })
-    await updateProfile(auth.currentUser, {
-      photoURL: url,
-    })
-    setImageFile(null)
   }
 
   useEffect(() => {
     if (imageFile) {
-      uploadImage()
+      onImageEdit()
     }
   }, [imageFile])
 
@@ -115,25 +128,32 @@ export default function Profile() {
       <section className="max-w-6xl px-4 mx-auto">
         <h1>내 프로필</h1>
         <div className="w-full sm:w-[50%] mt-6 mx-auto">
-          <div className="w-[150px] mx-auto relative rounded-full mb-4 overflow-hidden cursor-pointer group">
+          <div className="relative w-[200px] mx-auto rounded-full mb-4 overflow-hidden  group shadow-md">
             <>
               {auth.currentUser?.photoURL ? (
                 <img
                   src={auth.currentUser.photoURL}
                   alt="profile-image"
-                  className="w-[150px] h-[150px] object-cover transition duration-200 ease-in-out group-hover:brightness-75"
+                  className="w-[200px] h-[200px] object-cover transition duration-200 ease-in-out group-hover:brightness-75"
                 />
               ) : (
                 <FaUserCircle
-                  size={88}
+                  size={200}
                   className="bg-white transition duration-200 ease-in-out group-hover:brightness-75"
                 />
               )}
               <label
                 htmlFor="photo"
-                className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] invisible group-hover:visible"
+                className={`absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] text-white 
+                      ${
+                        imageLoading
+                          ? 'visible'
+                          : 'invisible group-hover:visible'
+                      }`}
               >
-                <AiOutlinePlus size={40} className="text-white" />
+                <div className="w-[200px] h-[200px] flex justify-center items-center cursor-pointer">
+                  {imageLoading ? <Spinner /> : <AiOutlinePlus size={40} />}
+                </div>
               </label>
               <input
                 type="file"
@@ -149,41 +169,24 @@ export default function Profile() {
             </>
           </div>
 
-          <form className="flex-1 ml-2">
-            <div className="relative mb-0.5">
-              <input
-                type="text"
-                name="name"
-                value={name!}
-                disabled={!changeDetail}
-                onChange={onChange}
-                className={`w-full px-3 py-2 text-gray-700 bg-white border rounded transition ease-in-out outline-none ${
-                  changeDetail ? 'border-gray-300' : 'border-white'
-                } ${changeDetail && 'bg-blue-100'}`}
-              />
-              <AiOutlineEdit
-                size={20}
-                onClick={onEdit}
-                className={`absolute right-3 top-2 cursor-pointer ${
-                  changeDetail && 'text-blue-600'
-                }`}
-              />
-            </div>
-            <div className="w-full px-3 py-2 text-gray-700 bg-white">
+          <form>
+            <Input
+              type="text"
+              name="name"
+              value={name!}
+              disabled={!changeDetail}
+              className={`w-full text-center
+                    ${changeDetail ? 'border-gray-300' : 'border-white'}
+                    ${changeDetail && 'bg-blue-100'}`}
+              onChange={onChange}
+              icon={changeDetail ? AiFillEdit : AiOutlineEdit}
+              iconAction={onNameEdit}
+            />
+            <div className="px-4 py-3 text-sm text-gray-700 bg-white text-center">
               {email}
             </div>
           </form>
         </div>
-        <Button
-          type="button"
-          level="primary"
-          size="l"
-          withIcon={true}
-          className="w-full sm:w-[50%] mt-6 mx-auto"
-          onClick={() => navigate('/create-listing')}
-        >
-          <AiOutlineHome size={20} className="mr-1" />내 매물 등록하기
-        </Button>
       </section>
       <ul className="max-w-6xl w-full sm:w-[50%] text-left mx-auto mt-6 px-4">
         <Link to={'/profile/my-listings'}>
@@ -195,38 +198,10 @@ export default function Profile() {
         <Link to={'/profile/favorite-listings'}>
           <li className="border-b py-2 flex items-center">
             <AiOutlineHeart size={20} className="mr-2" />
-            관심 있는 매물
+            내가 찜한 매물
           </li>
         </Link>
       </ul>
-      {/* <section className="max-w-6xl px-4 mx-auto">
-        <h4 className="text-center mb-0">나의 매물 목록</h4>
-        <main>
-          {!pageLoading && listings.length > 0 && (
-            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6 mb-6">
-              {listings.map((listing) => (
-                <ListingItem key={listing.id} listing={listing} />
-              ))}
-            </ul>
-          )}
-        </main>
-        {lastFetchedListing && (
-          <div className="flex justify-center mb-4">
-            <Button
-              type="button"
-              level="outline"
-              size="s"
-              onClick={onFetchMore}
-              disabled={btnLoading}
-            >
-              더 보기
-            </Button>
-          </div>
-        )}
-      </section> */}
-      {alert.status !== 'pending' && (
-        <Toast alert={alert} setAlert={setAlert} />
-      )}
     </>
   )
 }
