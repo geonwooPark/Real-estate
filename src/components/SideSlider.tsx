@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { auth, db } from '../firebase'
 import { numberToKorean } from '../utils/numberToKorean'
 import Moment from 'react-moment'
@@ -6,10 +6,10 @@ import Button from './Button'
 import {
   AiFillHeart,
   AiOutlineCalendar,
-  AiOutlineClose,
   AiOutlineHeart,
   AiOutlinePushpin,
 } from 'react-icons/ai'
+import { IoIosArrowForward } from 'react-icons/io'
 import { BiArea } from 'react-icons/bi'
 import { RiParkingBoxLine } from 'react-icons/ri'
 import { MdOutlineSensorDoor } from 'react-icons/md'
@@ -23,6 +23,7 @@ import {
 } from 'firebase/firestore'
 import { useNavigate } from 'react-router'
 import useSnapShot from '../hooks/useSnapShot'
+import { ToastContext } from '../App'
 
 interface SideSliderProps {
   showInfo: boolean
@@ -38,16 +39,30 @@ export default function SideSlider({
   showInfo,
   setShowInfo,
   listing,
-}: SideSliderProps) {
+}: SideSliderProps): JSX.Element {
   const navigate = useNavigate()
   const { value } = useSnapShot<Fav>('favorites', listing.id)
+  const setAlert = useContext(ToastContext)
 
   const deleteListing = async () => {
     const confirm = window.confirm('해당 매물을 삭제 하시겠습니까?')
-    if (confirm) {
-      await deleteDoc(doc(db, 'listings', listing.id))
-      await deleteDoc(doc(db, 'favorites', listing.id))
-      navigate('/profile')
+    try {
+      if (confirm) {
+        await deleteDoc(doc(db, 'listings', listing.id))
+        await deleteDoc(doc(db, 'favorites', listing.id))
+        navigate('/profile')
+        setAlert({
+          status: 'success',
+          message: '성공적으로 매물을 삭제했습니다.',
+        })
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlert({
+          status: 'error',
+          message: error.message,
+        })
+      }
     }
   }
 
@@ -57,7 +72,7 @@ export default function SideSlider({
 
   const startChat = async () => {
     if (!auth.currentUser) {
-      return
+      return navigate('/sign-in')
     }
     const user1 = auth.currentUser?.uid
     const user2 = listing.postedBy
@@ -88,17 +103,21 @@ export default function SideSlider({
   return (
     listing.images && (
       <aside
-        className={`w-full md:w-[300px] lg:w-[400px] border-l bg-white md:absolute top-0 right-0 z-10 transition-transform duration-200 ease-in-out ${
+        className={`w-full md:w-[300px] lg:w-[400px] border-l bg-white md:absolute top-0 right-0 z-10 transition-transform duration-200 ease-in-out
+        ${
           !showInfo
             ? 'md:translate-x-[300px] lg:translate-x-[400px]'
             : 'translate-x-0'
         }`}
       >
         <div
-          className="absolute top-[50%] -left-[1px] -translate-x-[50%] -translate-y-[50%] z-20 bg-white border p-2 rounded-3xl shadow-lg cursor-pointer hidden md:block"
+          className="text-gray-700 absolute top-[50%] -translate-x-[50%] -translate-y-[50%] z-20 bg-white border p-2 rounded-3xl shadow-lg cursor-pointer hidden md:block"
           onClick={() => setShowInfo(!showInfo)}
         >
-          <AiOutlineClose size={20} />
+          <IoIosArrowForward
+            size={20}
+            className={showInfo ? 'rotate-0' : 'rotate-180 -translate-x-2'}
+          />
         </div>
         <div className="md:h-[calc(100vh-48px-61px)] md:overflow-y-scroll hide-scroll">
           <Carousel
@@ -193,16 +212,16 @@ export default function SideSlider({
           ) : (
             <>
               <Button
-                label=""
+                label="찜"
                 type="button"
-                level="ghost"
+                level="outline"
                 size="s"
                 icon={
                   value?.users.includes(auth.currentUser?.uid as string)
                     ? AiFillHeart
                     : AiOutlineHeart
                 }
-                className="mr-2"
+                className="mr-2 text-red-400"
                 onClick={likeListing}
               />
               <Button

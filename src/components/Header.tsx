@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import useAuthStatus from '../hooks/useAuthStatus'
 import { auth } from '../firebase'
 import MenuIcon from './MenuIcon'
-import { MapContext } from '../App'
+import { MapContext, ToastContext } from '../App'
 
 const { kakao } = window as any
 
@@ -14,6 +14,25 @@ export default function Header() {
   const navigate = useNavigate()
   const { loggedIn, setLoggedIn, checkingStatus } = useAuthStatus()
   const [showMenu, setShowMenu] = useState(false)
+  const setAlert = useContext(ToastContext)
+
+  const goHome = () => {
+    navigate('/')
+    try {
+      kakao.maps.load(() => {
+        const moveLatLon = new kakao.maps.LatLng(37.574187, 126.976882)
+        map.setCenter(moveLatLon)
+        map.setLevel(8)
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlert({
+          status: 'error',
+          message: error.message,
+        })
+      }
+    }
+  }
 
   const onLogout = () => {
     auth.signOut()
@@ -28,33 +47,40 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white border-b sticky top-0 z-50">
-      <div className="px-4 sm:max-w-6xl sm:mx-auto sm:flex sm:flex-row sm:justify-between">
-        <div className="w-full border-b flex items-center justify-between sm:w-auto sm:border-none">
-          <img
-            src="https://static.rdc.moveaws.com/images/logos/rdc-logo-default.svg"
-            alt="logo"
-            className="h-5 my-3 cursor-pointer"
-            onClick={() => {
-              navigate('/')
-              const moveLatLon = new kakao.maps.LatLng(37.574187, 126.976882)
-              map.setCenter(moveLatLon)
-              map.setLevel(8)
-            }}
-          />
-          <MenuIcon
-            showMenu={showMenu}
-            setShowMenu={setShowMenu}
-            className={'sm:hidden'}
-          />
+    <header
+      className={`bg-white border-b sticky w-full h-[48px] top-0 z-50 sm:max-w-6xl sm:mx-auto sm:flex sm:justify-between
+                  ${!showMenu && 'overflow-hidden sm:overflow-auto'}
+                `}
+    >
+      <div className="w-full h-[48px] px-4 border-b flex items-center justify-between sm:w-auto sm:border-none">
+        {/* <img
+          src=""
+          alt="logo"
+          className="h-5 my-3 cursor-pointer"
+          onClick={() => {
+            navigate('/')
+            const moveLatLon = new kakao.maps.LatLng(37.574187, 126.976882)
+            map.setCenter(moveLatLon)
+            map.setLevel(8)
+          }}
+        /> */}
+        <div onClick={goHome} className="font-bold text-3xl cursor-pointer">
+          부동산직거래
         </div>
+        <MenuIcon
+          showMenu={showMenu}
+          setShowMenu={setShowMenu}
+          className={'sm:hidden'}
+        />
+      </div>
 
+      <div className="overflow-hidden border-b sm:border-none">
         <div
-          className={`absolute sm:relative left-0 w-full sm:w-auto transition-transform duration-200 ease-in-out shadow-md sm:shadow-none ${
-            showMenu ? 'translate-y-0' : '-translate-y-[300px]'
-          } sm:translate-y-0`}
+          className={`w-full transition-transform duration-200 ease-in-out sm:translate-y-0 bg-white
+                      ${showMenu ? 'translate-y-0' : '-translate-y-full'}
+                    `}
         >
-          <ul className="bg-white px-0 flex flex-col sm:flex-row sm:space-x-10 text-center">
+          <ul className="px-4 flex flex-col sm:flex-row sm:gap-10 sm:justify-end text-center">
             {loggedIn ? (
               <>
                 <li

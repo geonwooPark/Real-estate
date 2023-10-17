@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Alert } from '../interfaces/interfaces'
-import { initAlert } from '../pages/Signup'
+import { initAlert } from '../App'
 
 interface ToastProps {
   alert: Alert
@@ -26,7 +26,7 @@ export default function Toast({ alert, setAlert }: ToastProps) {
 
   return (
     <div
-      className={`fixed bottom-0 w-full bg-slate-800 px-4 py-2 text-white text-xs text-center border-b-2 border-solid transition duration-500 ease-in-out ${
+      className={`fixed z-100 bottom-0 w-full bg-slate-800 px-4 py-2 text-white text-xs text-center border-b-2 border-solid transition duration-500 ease-in-out ${
         alert.status === 'error'
           ? 'border-red-600'
           : alert.status === 'success'

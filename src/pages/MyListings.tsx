@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ListingItem from '../components/ListingItem'
-import Button from '../components/common/Button'
+import Button from '../components/Button'
 import {
   collection,
   query,
@@ -13,18 +13,16 @@ import {
   QueryDocumentSnapshot,
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
-import { initAlert } from './Signup'
-import Toast from '../components/Toast'
+import { ToastContext } from '../App'
+import Spinner from '../components/Spinner'
 
 export default function MyListings() {
   const [listings, setListings] = useState<DocumentData[]>([])
-
   const [lastFetchedListing, setLastFetchedListing] =
     useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null)
-
   const [pageLoading, setPageLoading] = useState(false)
   const [btnLoading, setBtnLoading] = useState(false)
-  const [alert, setAlert] = useState(initAlert)
+  const setAlert = useContext(ToastContext)
 
   const fetchMyListings = async () => {
     try {
@@ -85,36 +83,34 @@ export default function MyListings() {
     fetchMyListings()
   }, [])
 
-  return (
-    <>
-      <section className="max-w-6xl px-4 mx-auto">
-        <h4 className="text-center mb-0">내가 올린 매물</h4>
-        <main>
-          {!pageLoading && listings.length > 0 && (
-            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6 mb-6">
-              {listings.map((listing) => (
-                <ListingItem key={listing.id} listing={listing} />
-              ))}
-            </ul>
-          )}
-        </main>
-        {lastFetchedListing && (
-          <div className="flex justify-center mb-4">
-            <Button
-              type="button"
-              level="outline"
-              size="s"
-              onClick={onFetchMore}
-              disabled={btnLoading}
-            >
-              더 보기
-            </Button>
-          </div>
+  if (pageLoading) return <Spinner />
+
+  return listings.length !== 0 ? (
+    <section className="max-w-6xl px-4 mx-auto">
+      <h4 className="text-center mb-0">내가 올린 매물</h4>
+      <main>
+        {!pageLoading && listings.length > 0 && (
+          <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6 mb-6">
+            {listings.map((listing) => (
+              <ListingItem key={listing.id} listing={listing} />
+            ))}
+          </ul>
         )}
-      </section>
-      {alert.status !== 'pending' && (
-        <Toast alert={alert} setAlert={setAlert} />
+      </main>
+      {lastFetchedListing && (
+        <div className="flex justify-center mb-4">
+          <Button
+            label="더 보기"
+            type="button"
+            level="outline"
+            size="s"
+            onClick={onFetchMore}
+            disabled={btnLoading}
+          />
+        </div>
       )}
-    </>
+    </section>
+  ) : (
+    <h4 className="text-center text-gray-400">등록된 매물이 없습니다!</h4>
   )
 }

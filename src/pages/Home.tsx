@@ -19,15 +19,25 @@ export default function Home() {
   const [listings, setListings] = useState<DocumentData[]>([])
   const [currentListing, setCurrentListing] = useState<DocumentData>({})
   const [keyword, setKeyword] = useState('')
-  // const [map, setMap] = useState<any>(null)
   const { map, setMap } = useContext(MapContext)
-
   const [markers, setMarkers] = useState<any[]>([])
   const [clusterer, setClusterer] = useState<any>(null)
   const [showInfo, setShowInfo] = useState(false)
   const [showDropDownList, setShowDropDownList] = useState(false)
   const [itemType, setItemType] = useState('유형')
   const [copyUrl, setCopyUrl] = useState(false)
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const ps = new kakao.maps.services.Places()
+    ps.keywordSearch(keyword, placesSearchCB)
+    setKeyword('')
+  }
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setKeyword(value)
+  }
 
   const placesSearchCB = (data: any, status: any) => {
     if (status === kakao.maps.services.Status.OK) {
@@ -49,18 +59,6 @@ export default function Home() {
     if (level > 4) {
       map.setLevel(4)
     }
-  }
-
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const ps = new kakao.maps.services.Places()
-    ps.keywordSearch(keyword, placesSearchCB)
-    setKeyword('')
-  }
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
-    setKeyword(value)
   }
 
   const fetchData = async () => {
@@ -164,7 +162,7 @@ export default function Home() {
           <div className="flex items-center text-sm">
             <button
               type="button"
-              className="bg-white px-4 py-2 border shadow-md rounded-sm"
+              className="text-gray-700 bg-white px-4 py-2 border shadow-md rounded-sm"
               onClick={() => {
                 setShowDropDownList(!showDropDownList)
               }}
@@ -183,7 +181,7 @@ export default function Home() {
 
           <div className="overflow-hidden w-[58.23px]">
             <DropDownList visibility={showDropDownList}>
-              <ul className="bg-white px-4 border shadow-md rounded-sm text-sm">
+              <ul className="text-gray-700 bg-white px-4 border shadow-md rounded-sm text-sm">
                 <li className="py-2 border-b">
                   <button
                     type="button"
@@ -235,35 +233,41 @@ export default function Home() {
               type="text"
               value={keyword}
               onChange={onChange}
-              className="w-full px-4 py-2 border rounded-[100px] text-sm focus:outline-none"
+              className="text-gray-700 w-full px-4 py-2 border rounded-[100px] shadow-md text-sm focus:outline-none"
               placeholder="장소를 검색해보세요."
             />
             <button
               type="submit"
-              className="absolute top-[50%] right-0 -translate-y-[50%]"
+              className="text-gray-700 absolute top-[50%] right-0 -translate-y-[50%]"
             >
               <BsSearch size={16} className="mr-4" />
             </button>
           </div>
         </form>
         <div
-          className="absolute top-4 right-4 bg-white rounded-3xl p-2 w-10 h-10 border cursor-pointer shadow-md z-30"
+          className="text-gray-700 absolute top-4 right-4 bg-white rounded-3xl p-2 w-10 h-10 border cursor-pointer shadow-md z-30"
           onClick={() => {
             navigator.clipboard.writeText(window.location.href)
             setCopyUrl(true)
             setTimeout(() => setCopyUrl(false), 2500)
           }}
         >
-          <BsShare size={20} className="text-gray-700" />
+          <BsShare size={20} />
         </div>
 
         <div id="map" className="w-full h-full"></div>
       </section>
-      <SideSlider
-        showInfo={showInfo}
-        setShowInfo={setShowInfo}
-        listing={currentListing}
-      />
+      {currentListing.images ? (
+        <SideSlider
+          showInfo={showInfo}
+          setShowInfo={setShowInfo}
+          listing={currentListing}
+        />
+      ) : (
+        <div className="flex justify-center items-center h-[calc(100vh-48px-300px)] sm:h-[calc(100vh-48px-400px)] md:hidden">
+          <h6 className="text-center text-gray-400">매물을 선택해주세요.</h6>
+        </div>
+      )}
       {copyUrl && (
         <p className="fixed bottom-10 left-[50%] translate-x-[-50%] bg-white border px-4 py-2 rounded-2xl text-sm text-gray-700 z-10">
           링크가 복사되었습니다!

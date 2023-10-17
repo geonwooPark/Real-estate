@@ -11,7 +11,7 @@ interface ListingItemProps {
 
 export default function ListingItem({ listing }: ListingItemProps) {
   return (
-    <li className="bg-white shadow-md rounded-xl overflow-hidden group mb-4 sm:mb-0">
+    <li className="bg-white border border-gray-400 rounded-xl overflow-hidden group mb-4 sm:mb-0">
       <Link to={`/category/${listing.itemType}/${listing.id}`}>
         <div className="overflow-hidden">
           <img

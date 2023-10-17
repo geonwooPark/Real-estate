@@ -1,11 +1,11 @@
 import { DocumentData, doc, getDoc } from 'firebase/firestore'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { db } from '../firebase'
 import Spinner from '../components/Spinner'
 import { BsShare } from 'react-icons/bs'
 import SideSlider from '../components/SideSlider'
-import { initAlert } from './Signup'
+import { ToastContext } from '../App'
 
 const { kakao } = window as any
 
@@ -16,7 +16,7 @@ export default function Detail() {
   const [showInfo, setShowInfo] = useState(true)
   const [copyUrl, setCopyUrl] = useState(false)
   const [pageLoading, setPageLoading] = useState(false)
-  const [alert, setAlert] = useState(initAlert)
+  const setAlert = useContext(ToastContext)
 
   const fetchData = async () => {
     try {

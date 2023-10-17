@@ -12,7 +12,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BsSend } from 'react-icons/bs'
 import { useLocation } from 'react-router'
 import { auth, db } from '../firebase'
@@ -21,6 +21,8 @@ import { numberToKorean } from '../utils/numberToKorean'
 import ChatRoom from '../components/ChatRoom'
 import { TypeChatRoom } from '../interfaces/interfaces'
 import Message from '../components/Message'
+import { ToastContext } from '../App'
+import Spinner from '../components/Spinner'
 
 export default function Chat() {
   const location = useLocation()
@@ -32,6 +34,12 @@ export default function Chat() {
   const [chatRooms, setChatRooms] = useState<TypeChatRoom[]>([])
   const [text, setText] = useState('')
   const [messages, setMessages] = useState<DocumentData[]>([])
+  const [pageLoading, setPageLoading] = useState(false)
+  const setAlert = useContext(ToastContext)
+
+  const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value)
+  }
 
   const getChat = async (listing: InitialState) => {
     if (!user1 || !listing?.postedBy) {
@@ -72,40 +80,50 @@ export default function Chat() {
   }
 
   const getChatList = async () => {
-    const q = query(
-      collection(db, 'messages'),
-      where('users', 'array-contains', user1),
-    )
-
-    const querySnap = await getDocs(q)
-    const messages = querySnap.docs.map((doc) => doc.data())
-
-    const chatRooms: TypeChatRoom[] = []
-
-    for (const message of messages) {
-      const listingRef = doc(db, 'listings', message.listingId)
-      const meRef = doc(
-        db,
-        'users',
-        message.users.find((id: string) => id === user1),
+    try {
+      setPageLoading(true)
+      const q = query(
+        collection(db, 'messages'),
+        where('users', 'array-contains', user1),
       )
-      const otherRef = doc(
-        db,
-        'users',
-        message.users.find((id: string) => id !== user1),
-      )
+      const querySnap = await getDocs(q)
+      const messages = querySnap.docs.map((doc) => doc.data())
 
-      const listingdDoc = await getDoc(listingRef)
-      const meDoc = await getDoc(meRef)
-      const otherDoc = await getDoc(otherRef)
+      const chatRooms: TypeChatRoom[] = []
+      for (const message of messages) {
+        const listingRef = doc(db, 'listings', message.listingId)
+        const meRef = doc(
+          db,
+          'users',
+          message.users.find((id: string) => id === user1),
+        )
+        const otherRef = doc(
+          db,
+          'users',
+          message.users.find((id: string) => id !== user1),
+        )
 
-      chatRooms.push({
-        listing: listingdDoc.data(),
-        me: meDoc.data(),
-        other: otherDoc.data(),
-      })
+        const listingdDoc = await getDoc(listingRef)
+        const meDoc = await getDoc(meRef)
+        const otherDoc = await getDoc(otherRef)
+
+        chatRooms.push({
+          listing: listingdDoc.data(),
+          me: meDoc.data(),
+          other: otherDoc.data(),
+        })
+      }
+      setChatRooms(chatRooms)
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlert({
+          status: 'error',
+          message: error.message,
+        })
+      }
+    } finally {
+      setPageLoading(false)
     }
-    setChatRooms(chatRooms)
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -142,6 +160,8 @@ export default function Chat() {
   useEffect(() => {
     messagesSnapShot()
   }, [currentChatRoom])
+
+  if (pageLoading) return <Spinner />
 
   return (
     <section className="max-w-6xl px-4 mx-auto">
@@ -185,7 +205,7 @@ export default function Chat() {
                 <small>{currentChatRoom.listing?.roadName}</small>
               </div>
             </div>
-            <div className="h-[calc(100%-170px)] overflow-auto p-2 shadow-[inset_0px_0px_30px_#46464620]">
+            <div className="h-[calc(100%-164px)] overflow-auto p-2 shadow-[inset_0px_0px_30px_#46464620]">
               {messages.map((message, i) => {
                 return <Message key={i} message={message} user1={user1} />
               })}
@@ -198,10 +218,8 @@ export default function Chat() {
                 <input
                   type="text"
                   value={text}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setText(e.target.value)
-                  }
-                  className="w-full rounded-full text-sm"
+                  onChange={onTextChange}
+                  className="px-3 py-2 w-full rounded-full text-sm outline-none"
                   placeholder="메시지를 입력하세요."
                 />
                 <button
@@ -214,7 +232,9 @@ export default function Chat() {
             </form>
           </div>
         ) : (
-          <h4 className="w-[80%] text-center">채팅방을 선택해주세요.</h4>
+          <h4 className="w-[80%] text-center text-gray-400">
+            채팅방을 선택해주세요
+          </h4>
         )}
       </div>
     </section>
