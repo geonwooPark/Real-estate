@@ -9,10 +9,10 @@ import React, { useEffect, useState } from 'react'
 import { BsSearch, BsShare } from 'react-icons/bs'
 import { db } from '../firebase'
 import SideSlider from '../components/SideSlider'
-import DropDownList from '../components/DropDownList'
 import { AiOutlineClose } from 'react-icons/ai'
 import { useAppDispatch, useAppSelector } from '../store/store'
 import { setMap } from '../store/features/mapSlice'
+import DropDownMenu from '../components/DropdownMenu'
 
 const { kakao } = window as any
 
@@ -161,69 +161,62 @@ export default function Home() {
   return (
     <main className="relative overflow-hidden">
       <section className="w-full h-[300px] sm:h-[400px] md:h-[calc(100vh-48px)] relative">
-        <div className="absolute top-4 left-4 z-10">
-          <div className="flex items-center text-sm">
-            <button
-              type="button"
-              className="text-gray-700 bg-white px-4 py-2 border shadow-md rounded-sm"
-              onClick={() => {
-                setShowDropDownList(!showDropDownList)
-              }}
-            >
-              {showDropDownList ? '닫기' : itemType}
-            </button>
-            <AiOutlineClose
-              size={20}
-              className={`text-red-400 ${itemType === '유형' && 'hidden'}`}
-              onClick={() => {
-                fetchData()
-                setItemType('유형')
-              }}
-            />
-          </div>
-
-          <div className="overflow-hidden w-[58.23px]">
-            <DropDownList visibility={showDropDownList}>
-              <ul className="text-gray-700 bg-white px-4 border shadow-md rounded-sm text-sm">
-                <li className="py-2 border-b">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      fetchFilteredData('매매')
-                      setItemType('매매')
-                      setShowDropDownList(false)
-                    }}
-                  >
-                    매매
-                  </button>
-                </li>
-                <li className="py-2 border-b">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      fetchFilteredData('전세')
-                      setItemType('전세')
-                      setShowDropDownList(false)
-                    }}
-                  >
-                    전세
-                  </button>
-                </li>
-                <li className="py-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      fetchFilteredData('월세')
-                      setItemType('월세')
-                      setShowDropDownList(false)
-                    }}
-                  >
-                    월세
-                  </button>
-                </li>
-              </ul>
-            </DropDownList>
-          </div>
+        <div className="absolute top-4 left-4 z-10 flex items-center">
+          <DropDownMenu
+            label={itemType}
+            isOpen={showDropDownList}
+            setIsOpen={setShowDropDownList}
+          >
+            <ul className="bg-gray-50 border rounded-sm">
+              <li className="border-b">
+                <button
+                  type="button"
+                  className="px-4 py-2"
+                  onClick={() => {
+                    fetchFilteredData('매매')
+                    setItemType('매매')
+                    setShowDropDownList(false)
+                  }}
+                >
+                  매매
+                </button>
+              </li>
+              <li className="border-b">
+                <button
+                  type="button"
+                  className="px-4 py-2"
+                  onClick={() => {
+                    fetchFilteredData('전세')
+                    setItemType('전세')
+                    setShowDropDownList(false)
+                  }}
+                >
+                  전세
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="px-4 py-2"
+                  onClick={() => {
+                    fetchFilteredData('월세')
+                    setItemType('월세')
+                    setShowDropDownList(false)
+                  }}
+                >
+                  월세
+                </button>
+              </li>
+            </ul>
+          </DropDownMenu>
+          <AiOutlineClose
+            size={20}
+            className={`ml-1 text-red-400 ${itemType === '유형' && 'hidden'}`}
+            onClick={() => {
+              fetchData()
+              setItemType('유형')
+            }}
+          />
         </div>
 
         <form
@@ -247,6 +240,7 @@ export default function Home() {
             </button>
           </div>
         </form>
+
         <div
           className="text-gray-700 absolute top-4 right-4 bg-white rounded-3xl p-2 w-10 h-10 border cursor-pointer shadow-md z-30"
           onClick={() => {
