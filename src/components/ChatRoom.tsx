@@ -1,13 +1,13 @@
 import React from 'react'
 import useSnapShot from '../hooks/useSnapShot'
 import { FaUserCircle } from 'react-icons/fa'
-import { TypeChatRoom, TypeMessage } from '../interfaces/interfaces'
+import { ChatRoomType, MessageType } from '../interfaces/interfaces'
 
 interface ChatRoomProps {
-  chatRoom: TypeChatRoom
-  currentChatRoom: TypeChatRoom | null
+  chatRoom: ChatRoomType
+  currentChatRoom: ChatRoomType | null
   user1: string | undefined
-  setCurrentChatRoom: React.Dispatch<React.SetStateAction<TypeChatRoom | null>>
+  setCurrentChatRoom: React.Dispatch<React.SetStateAction<ChatRoomType | null>>
 }
 
 export default function ChatRoom({
@@ -21,7 +21,7 @@ export default function ChatRoom({
     user1 && user1 > user2
       ? `${user1}.${user2}.${chatRoom.listing?.id}`
       : `${user2}.${user1}.${chatRoom.listing?.id}`
-  const { value } = useSnapShot<TypeMessage>('messages', chatId)
+  const { value } = useSnapShot<MessageType>('messages', chatId)
 
   return (
     <div

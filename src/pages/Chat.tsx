@@ -19,7 +19,7 @@ import { auth, db } from '../firebase'
 import { InitialState } from '../reducers/formReducer'
 import { numberToKorean } from '../utils/numberToKorean'
 import ChatRoom from '../components/ChatRoom'
-import { TypeChatRoom } from '../interfaces/interfaces'
+import { ChatRoomType } from '../interfaces/interfaces'
 import Message from '../components/Message'
 import { ToastContext } from '../App'
 import Spinner from '../components/Spinner'
@@ -29,10 +29,10 @@ export default function Chat() {
   const location = useLocation()
   const user1 = auth.currentUser?.uid
 
-  const [currentChatRoom, setCurrentChatRoom] = useState<TypeChatRoom | null>(
+  const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoomType | null>(
     null,
   )
-  const [chatRooms, setChatRooms] = useState<TypeChatRoom[]>([])
+  const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([])
   const [text, setText] = useState('')
   const [messages, setMessages] = useState<DocumentData[]>([])
   const [pageLoading, setPageLoading] = useState(true)
@@ -114,7 +114,7 @@ export default function Chat() {
         const querySnap = await getDocs(q)
         const messages = querySnap.docs.map((doc) => doc.data())
 
-        const chatRooms: TypeChatRoom[] = []
+        const chatRooms: ChatRoomType[] = []
         for (const message of messages) {
           const listingRef = doc(db, 'listings', message.listingId)
           const meRef = doc(

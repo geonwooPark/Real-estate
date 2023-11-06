@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore'
+import { ImagesType, OptionsType } from '../interfaces/interfaces'
 
 export type InitialState = {
   itemType: '매매' | '전세' | '월세'
@@ -11,18 +12,13 @@ export type InitialState = {
   rooms: number
   bathrooms: number
   parking: boolean
-  options: {
-    [key: string]: boolean
-  }
+  options: OptionsType[]
   detail: string
   price: number
   monthly: number
   maintenanceFee: number
   availableDate: string
-  images: {
-    url: string
-    path: string
-  }[]
+  images: ImagesType[]
   publishedAt?: Timestamp
   postedBy?: string
   id?: string
@@ -39,18 +35,18 @@ export const initialState: InitialState = {
   rooms: 1,
   bathrooms: 1,
   parking: false,
-  options: {
-    싱크대: false,
-    에어컨: false,
-    세탁기: false,
-    냉장고: false,
-    가스레인지: false,
-    옷장: false,
-    책상: false,
-    침대: false,
-    전자레인지: false,
-    TV: false,
-  },
+  options: [
+    { name: '싱크대', status: false },
+    { name: '에어컨', status: false },
+    { name: '세탁기', status: false },
+    { name: '냉장고', status: false },
+    { name: '가스레인지', status: false },
+    { name: '옷장', status: false },
+    { name: '책상', status: false },
+    { name: '침대', status: false },
+    { name: '전자레인지', status: false },
+    { name: 'TV', status: false },
+  ],
   detail: '',
   price: 0,
   monthly: 0,
@@ -144,12 +140,13 @@ export const formReducer = (
       return { ...state, parking: JSON.parse(action.payload) as boolean }
     }
     case 'select-options': {
-      for (const key of Object.keys(options)) {
-        if (key === action.payload) {
-          options[key] = !options[key]
+      const result = options.map((option) => {
+        if (option.name === action.payload) {
+          option = { ...option, status: !option.status }
         }
-      }
-      return { ...state, options }
+        return option
+      })
+      return { ...state, options: result }
     }
     case 'write-detail': {
       return { ...state, detail: action.payload }

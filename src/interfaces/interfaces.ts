@@ -5,18 +5,23 @@ export interface Alert {
   message: string
 }
 
-export interface Imgs {
+export interface ImagesType {
   url: string
   path: string
 }
 
-export interface TypeChatRoom {
+export interface OptionsType {
+  name: string
+  status: boolean
+}
+
+export interface ChatRoomType {
   listing: DocumentData | undefined
   me: DocumentData | undefined
   other: DocumentData | undefined
 }
 
-export interface TypeMessage {
+export interface MessageType {
   listing: string
   lastSender?: string
   lastText?: string

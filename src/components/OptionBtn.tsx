@@ -4,14 +4,14 @@ import { IconType } from 'react-icons'
 
 interface OptionBtnProps {
   dispatch: Dispatch<ActionWithPayload>
-  option: boolean
+  isSelected: boolean
   label: string
   icon: IconType
 }
 
 export default function OptionBtn({
   dispatch,
-  option,
+  isSelected,
   label,
   icon: Icon,
 }: OptionBtnProps) {
@@ -23,8 +23,12 @@ export default function OptionBtn({
         dispatch({ type: 'select-options', payload: e.currentTarget.name })
       }
       className={`
-      h-full px-2 pt-3 pb-2 flex flex-col items-center border border-gray-400 text-gray-800 rounded
-      ${option ? 'btn-ghost' : 'btn-outline'}`}
+      h-full px-2 pt-3 pb-2 flex flex-col items-center border rounded
+      ${
+        isSelected
+          ? 'border-blue-600 text-blue-600'
+          : 'border-gray-400 text-gray-800'
+      }`}
     >
       <Icon size={20} className="mb-1" />
       <div className="text-xs">{label}</div>

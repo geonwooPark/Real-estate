@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router'
 import useSnapShot from '../hooks/useSnapShot'
 import { ToastContext } from '../App'
 import { deleteObject, ref } from 'firebase/storage'
-import { Imgs } from '../interfaces/interfaces'
+import { ImagesType, OptionsType } from '../interfaces/interfaces'
 
 interface SideSliderProps {
   showInfo: boolean
@@ -52,7 +52,7 @@ export default function SideSlider({
       if (confirm) {
         await deleteDoc(doc(db, 'listings', listing.id))
         await deleteDoc(doc(db, 'favorites', listing.id))
-        await listing.images.forEach((image: Imgs) => {
+        await listing.images.forEach((image: ImagesType) => {
           deleteObject(ref(storage, image.path))
         })
         navigate('/profile')
@@ -176,17 +176,16 @@ export default function SideSlider({
             </ul>
             <hr />
             <ul className="mb-4 mt-4 text-sm">
-              {listing.options &&
-                Object.keys(listing.options).map((key) => {
-                  if (listing.options[key]) {
-                    return (
-                      <li key={key} className="py-3 flex items-center">
-                        <AiOutlinePushpin size={24} className="mr-1.5" />
-                        {key}
-                      </li>
-                    )
-                  }
-                })}
+              {listing.options.map((elem: OptionsType, i: number) => {
+                if (elem.status) {
+                  return (
+                    <li key={i} className="py-3 flex items-center">
+                      <AiOutlinePushpin size={24} className="mr-1.5" />
+                      {elem.name}
+                    </li>
+                  )
+                }
+              })}
             </ul>
             <hr />
             <p className="mt-6">{listing.detail}</p>

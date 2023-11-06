@@ -5,9 +5,8 @@ import React, {
   useState,
   useTransition,
 } from 'react'
-import { TbAirConditioning } from 'react-icons/tb'
 import { IoCloseCircleOutline } from 'react-icons/io5'
-import { AiOutlinePlus } from 'react-icons/ai'
+import { AiOutlinePlus, AiOutlinePushpin } from 'react-icons/ai'
 import { numberToKorean } from '../utils/numberToKorean'
 import { formReducer, initialState } from '../reducers/formReducer'
 import OptionBtn from '../components/OptionBtn'
@@ -23,7 +22,7 @@ import {
 } from 'firebase/storage'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useNavigate, useParams } from 'react-router'
-import { Imgs } from '../interfaces/interfaces'
+import { ImagesType } from '../interfaces/interfaces'
 import Spinner from '../components/Spinner'
 import { ToastContext } from '../App'
 
@@ -32,9 +31,9 @@ export default function EditListing() {
   const { listingId } = params
   const navigate = useNavigate()
   const [state, dispatch] = useReducer(formReducer, initialState)
-  const [URLs, setURLs] = useState<Imgs[]>([])
-  const [deletedURLs, setDeletedURLs] = useState<Imgs[]>([])
-  const [previewURLs, setPreviewURLs] = useState<Imgs[]>([])
+  const [URLs, setURLs] = useState<ImagesType[]>([])
+  const [deletedURLs, setDeletedURLs] = useState<ImagesType[]>([])
+  const [previewURLs, setPreviewURLs] = useState<ImagesType[]>([])
   const [images, setImages] = useState<File[]>([])
   const [showResearchAddress, setShowResearchAddress] = useState(false)
   const [btnLoading, setBtnLoading] = useState(false)
@@ -73,7 +72,7 @@ export default function EditListing() {
         )
       }
 
-      const imgs: Imgs[] = []
+      const imgs: ImagesType[] = []
       for (const image of images) {
         const imgRef = ref(storage, `listings/${Date.now()} - ${image.name}`)
         const result = await uploadBytes(imgRef, image)
@@ -153,8 +152,8 @@ export default function EditListing() {
 
       if (docSnap.exists()) {
         const listing: any = { ...docSnap.data() }
-        const arr: Imgs[] = []
-        listing.images.forEach((image: Imgs) => arr.push(image))
+        const arr: ImagesType[] = []
+        listing.images.forEach((image: ImagesType) => arr.push(image))
         setURLs(arr)
         dispatch({ type: 'fetch-listing', payload: listing })
       }
@@ -404,66 +403,15 @@ export default function EditListing() {
         {/* 옵션 선택 */}
         <h4>옵션</h4>
         <div className="grid grid-cols-4 gap-4 sm:grid-cols-5">
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.싱크대}
-            label="싱크대"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.에어컨}
-            label="에어컨"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.세탁기}
-            label="세탁기"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.냉장고}
-            label="냉장고"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.가스레인지}
-            label="가스레인지"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.옷장}
-            label="옷장"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.책상}
-            label="책상"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.침대}
-            label="침대"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.전자레인지}
-            label="전자레인지"
-            icon={TbAirConditioning}
-          />
-          <OptionBtn
-            dispatch={dispatch}
-            option={state.options.TV}
-            label="TV"
-            icon={TbAirConditioning}
-          />
+          {state.options.map((option, i) => (
+            <OptionBtn
+              key={i}
+              dispatch={dispatch}
+              isSelected={option.status}
+              label={option.name}
+              icon={AiOutlinePushpin}
+            />
+          ))}
         </div>
         {/* 가격 설정 */}
         <h4>
