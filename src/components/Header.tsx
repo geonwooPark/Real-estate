@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuthStatus from '../hooks/useAuthStatus'
 import { auth } from '../firebase'
 import MenuIcon from './MenuIcon'
-import { MapContext, ToastContext } from '../App'
-import DropDownList, { TypeTimer } from './DropDownList'
+import { useAppSelector } from '../store/store'
+// import { MapContext } from '../App'
 
 const { kakao } = window as any
 
 export default function Header() {
-  const { map } = useContext(MapContext)
+  const map = useAppSelector((state) => state.map.map)
 
   const location = useLocation()
   const navigate = useNavigate()

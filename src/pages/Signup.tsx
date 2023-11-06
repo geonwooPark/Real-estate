@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 import { Link, useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
@@ -6,7 +6,8 @@ import { auth, db } from '../firebase'
 import { Timestamp, doc, setDoc } from 'firebase/firestore'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { ToastContext } from '../App'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 const initData = {
   name: '',
@@ -16,11 +17,11 @@ const initData = {
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const [formData, setFormData] = useState(initData)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const setAlert = useContext(ToastContext)
 
   const { name, email, password } = formData
 
@@ -54,17 +55,22 @@ export default function SignUp() {
         createdAt: Timestamp.fromDate(new Date()),
       })
       setFormData(initData)
-      setAlert({
-        status: 'success',
-        message: '회원가입에 성공했습니다.',
-      })
+      dispatch(
+        setAlert({
+          status: 'success',
+          message: '회원가입에 성공했습니다.',
+        }),
+      )
+
       navigate('/', { replace: true })
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
+        dispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     } finally {
       setLoading(false)

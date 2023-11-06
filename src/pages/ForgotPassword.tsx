@@ -1,15 +1,17 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { auth } from '../firebase'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { ToastContext } from '../App'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 export default function ForgotPassword() {
+  const dispatch = useAppDispatch()
+
   const [email, setEmail] = useState('')
   const [btnLoading, setBtnLoading] = useState(false)
-  const setAlert = useContext(ToastContext)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -25,16 +27,20 @@ export default function ForgotPassword() {
       }
       setBtnLoading(true)
       await sendPasswordResetEmail(auth, email)
-      setAlert({
-        status: 'success',
-        message: '이메일이 성공적으로 발송되었습니다.',
-      })
+      dispatch(
+        setAlert({
+          status: 'success',
+          message: '이메일이 성공적으로 발송되었습니다.',
+        }),
+      )
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
+        dispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     } finally {
       setEmail('')

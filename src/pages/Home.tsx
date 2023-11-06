@@ -5,21 +5,24 @@ import {
   query,
   where,
 } from 'firebase/firestore'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BsSearch, BsShare } from 'react-icons/bs'
 import { db } from '../firebase'
 import SideSlider from '../components/SideSlider'
 import DropDownList from '../components/DropDownList'
 import { AiOutlineClose } from 'react-icons/ai'
-import { MapContext } from '../App'
+import { useAppDispatch, useAppSelector } from '../store/store'
+import { setMap } from '../store/features/mapSlice'
 
 const { kakao } = window as any
 
 export default function Home() {
+  const map = useAppSelector((state) => state.map.map)
+  const dispatch = useAppDispatch()
+
   const [listings, setListings] = useState<DocumentData[]>([])
   const [currentListing, setCurrentListing] = useState<DocumentData>({})
   const [keyword, setKeyword] = useState('')
-  const { map, setMap } = useContext(MapContext)
   const [markers, setMarkers] = useState<any[]>([])
   const [clusterer, setClusterer] = useState<any>(null)
   const [showInfo, setShowInfo] = useState(false)
@@ -90,7 +93,7 @@ export default function Home() {
         level: 8,
       }
       const map = await new kakao.maps.Map(container, options)
-      setMap(map)
+      dispatch(setMap(map))
     })
   }, [])
 

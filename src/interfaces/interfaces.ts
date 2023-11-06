@@ -1,6 +1,6 @@
 import { DocumentData } from 'firebase/firestore'
 
-export interface Alert {
+export interface AlertType {
   status: 'error' | 'success' | 'pending'
   message: string
 }

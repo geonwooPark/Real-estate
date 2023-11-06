@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ListingItem from '../components/ListingItem'
 import Button from '../components/Button'
 import {
@@ -13,17 +13,19 @@ import {
   QueryDocumentSnapshot,
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
-import { ToastContext } from '../App'
 import Spinner from '../components/Spinner'
 import EmptyState from '../components/EmptyState'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 export default function MyListings() {
+  const dispatch = useAppDispatch()
+
   const [listings, setListings] = useState<DocumentData[]>([])
   const [lastFetchedListing, setLastFetchedListing] =
     useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null)
   const [pageLoading, setPageLoading] = useState(true)
   const [btnLoading, setBtnLoading] = useState(false)
-  const setAlert = useContext(ToastContext)
 
   const onFetchMore = async () => {
     try {
@@ -43,10 +45,12 @@ export default function MyListings() {
       setListings((prev) => [...prev, ...listings])
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
+        dispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     } finally {
       setBtnLoading(false)

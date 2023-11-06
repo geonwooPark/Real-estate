@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { auth, db, storage } from '../firebase'
 import { numberToKorean } from '../utils/numberToKorean'
 import Moment from 'react-moment'
@@ -23,9 +23,10 @@ import {
 } from 'firebase/firestore'
 import { useNavigate } from 'react-router'
 import useSnapShot from '../hooks/useSnapShot'
-import { ToastContext } from '../App'
 import { deleteObject, ref } from 'firebase/storage'
 import { ImagesType, OptionsType } from '../interfaces/interfaces'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 interface SideSliderProps {
   showInfo: boolean
@@ -43,8 +44,8 @@ export default function SideSlider({
   listing,
 }: SideSliderProps): JSX.Element {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const { value } = useSnapShot<Fav>('favorites', listing.id)
-  const setAlert = useContext(ToastContext)
 
   const deleteListing = async () => {
     const confirm = window.confirm('해당 매물을 삭제 하시겠습니까?')
@@ -56,17 +57,21 @@ export default function SideSlider({
           deleteObject(ref(storage, image.path))
         })
         navigate('/profile')
-        setAlert({
-          status: 'success',
-          message: '성공적으로 매물을 삭제했습니다.',
-        })
+        dispatch(
+          setAlert({
+            status: 'success',
+            message: '성공적으로 매물을 삭제했습니다.',
+          }),
+        )
       }
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
+        dispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     }
   }

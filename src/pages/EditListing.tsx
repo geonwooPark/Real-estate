@@ -1,10 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-  useTransition,
-} from 'react'
+import React, { useEffect, useReducer, useState, useTransition } from 'react'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import { AiOutlinePlus, AiOutlinePushpin } from 'react-icons/ai'
 import { numberToKorean } from '../utils/numberToKorean'
@@ -24,12 +18,15 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useNavigate, useParams } from 'react-router'
 import { ImagesType } from '../interfaces/interfaces'
 import Spinner from '../components/Spinner'
-import { ToastContext } from '../App'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 export default function EditListing() {
   const params = useParams()
   const { listingId } = params
+  const alertDispatch = useAppDispatch()
   const navigate = useNavigate()
+
   const [state, dispatch] = useReducer(formReducer, initialState)
   const [URLs, setURLs] = useState<ImagesType[]>([])
   const [deletedURLs, setDeletedURLs] = useState<ImagesType[]>([])
@@ -38,7 +35,6 @@ export default function EditListing() {
   const [showResearchAddress, setShowResearchAddress] = useState(false)
   const [btnLoading, setBtnLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(false)
-  const setAlert = useContext(ToastContext)
   const [isPending, startTransition] = useTransition()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -86,16 +82,20 @@ export default function EditListing() {
       })
 
       navigate(`/category/${state.itemType}/${listingId}`)
-      setAlert({
-        status: 'success',
-        message: '매물을 성공적으로 수정했습니다.',
-      })
+      alertDispatch(
+        setAlert({
+          status: 'success',
+          message: '매물을 성공적으로 수정했습니다.',
+        }),
+      )
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
+        alertDispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     } finally {
       setBtnLoading(false)

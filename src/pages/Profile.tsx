@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   AiOutlineEdit,
   AiOutlineHeart,
@@ -18,10 +18,13 @@ import {
 } from 'firebase/storage'
 import { Link } from 'react-router-dom'
 import Input from '../components/Input'
-import { ToastContext } from '../App'
 import Spinner from '../components/Spinner'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 export default function Profile() {
+  const dispatch = useAppDispatch()
+
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName,
     email: auth.currentUser?.email,
@@ -30,7 +33,6 @@ export default function Profile() {
   const [changeDetail, setChangeDetail] = useState(false)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imageLoading, setImageLoading] = useState(false)
-  const setAlert = useContext(ToastContext)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -56,10 +58,12 @@ export default function Profile() {
           await updateDoc(doc(db, 'users', auth.currentUser.uid), {
             name,
           })
-          setAlert({
-            status: 'success',
-            message: '프로필 이름을 성공적으로 변경했습니다.',
-          })
+          dispatch(
+            setAlert({
+              status: 'success',
+              message: '프로필 이름을 성공적으로 변경했습니다.',
+            }),
+          )
         } else {
           setFormData({
             name: auth.currentUser?.displayName,
@@ -69,10 +73,12 @@ export default function Profile() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: '프로필 이름 변경에 실패했습니다.',
-        })
+        dispatch(
+          setAlert({
+            status: 'error',
+            message: '프로필 이름 변경에 실패했습니다.',
+          }),
+        )
       }
     }
   }
@@ -103,16 +109,20 @@ export default function Profile() {
             photoURL: url,
           })
           setImageFile(null)
-          setAlert({
-            status: 'success',
-            message: '프로필 사진을 성공적으로 변경했습니다.',
-          })
+          dispatch(
+            setAlert({
+              status: 'success',
+              message: '프로필 사진을 성공적으로 변경했습니다.',
+            }),
+          )
         } catch (error) {
           if (error instanceof Error) {
-            setAlert({
-              status: 'error',
-              message: '프로필 사진 변경에 실패했습니다.',
-            })
+            dispatch(
+              setAlert({
+                status: 'error',
+                message: '프로필 사진 변경에 실패했습니다.',
+              }),
+            )
           }
         } finally {
           setImageLoading(false)

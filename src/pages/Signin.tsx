@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 import { FcGoogle } from 'react-icons/fc'
 import { Link, useNavigate } from 'react-router-dom'
@@ -11,17 +11,18 @@ import { auth, db } from '../firebase'
 import { Timestamp, doc, getDoc, setDoc } from 'firebase/firestore'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { ToastContext } from '../App'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 export default function Signin() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [btnLoading, setBtnLoading] = useState(false)
   const [btn2Loading, setBtn2Loading] = useState(false)
   const { email, password } = formData
   const [showPassword, setShowPassword] = useState(false)
-  const setAlert = useContext(ToastContext)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -41,18 +42,23 @@ export default function Signin() {
       const result = await signInWithEmailAndPassword(auth, email, password)
       if (result.user) {
         setFormData({ email: '', password: '' })
-        setAlert({
-          status: 'success',
-          message: '로그인에 성공했습니다.',
-        })
+        dispatch(
+          setAlert({
+            status: 'success',
+            message: '로그인에 성공했습니다.',
+          }),
+        )
+
         navigate('/')
       }
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
+        dispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     } finally {
       setBtnLoading(false)
@@ -78,12 +84,20 @@ export default function Signin() {
         })
       }
       navigate('/')
+      dispatch(
+        setAlert({
+          status: 'success',
+          message: '로그인에 성공했습니다.',
+        }),
+      )
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: '구글 로그인에 실패 했습니다.',
-        })
+        dispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     } finally {
       setBtn2Loading(false)

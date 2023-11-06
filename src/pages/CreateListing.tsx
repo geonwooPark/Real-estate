@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useState, useTransition } from 'react'
+import React, { useReducer, useState, useTransition } from 'react'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import { AiOutlinePlus, AiOutlinePushpin } from 'react-icons/ai'
 import { numberToKorean } from '../utils/numberToKorean'
@@ -12,16 +12,18 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Timestamp, addDoc, collection, doc, setDoc } from 'firebase/firestore'
 import { useNavigate } from 'react-router'
 import { ImagesType } from '../interfaces/interfaces'
-import { ToastContext } from '../App'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 export default function CreateListing() {
   const navigate = useNavigate()
+  const alertDispatch = useAppDispatch()
+
   const [state, dispatch] = useReducer(formReducer, initialState)
   const [fileURLs, setfileURLs] = useState<string[]>([])
   const [images, setImages] = useState<File[]>([])
   const [showResearchAddress, setShowResearchAddress] = useState(false)
   const [btnLoading, setBtnLoading] = useState(false)
-  const setAlert = useContext(ToastContext)
   const [isPending, startTransition] = useTransition()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -74,16 +76,20 @@ export default function CreateListing() {
       })
 
       navigate(`/profile/my-listings`)
-      setAlert({
-        status: 'success',
-        message: '매물을 성공적으로 등록했습니다.',
-      })
+      alertDispatch(
+        setAlert({
+          status: 'success',
+          message: '매물을 성공적으로 등록했습니다.',
+        }),
+      )
     } catch (error) {
       if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
+        alertDispatch(
+          setAlert({
+            status: 'error',
+            message: error.message,
+          }),
+        )
       }
     } finally {
       setBtnLoading(false)

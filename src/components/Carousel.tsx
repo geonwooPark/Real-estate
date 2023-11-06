@@ -4,14 +4,10 @@ import 'slick-carousel/slick/slick.css'
 // import 'slick-carousel/slick/slick-theme.css'
 import { IconType } from 'react-icons'
 import { HiOutlineArrowSmRight, HiOutlineArrowSmLeft } from 'react-icons/hi'
-
-interface Images {
-  path: string
-  url: string
-}
+import { ImagesType } from '../interfaces/interfaces'
 
 interface CarouselProps {
-  images: Images[]
+  images: ImagesType[]
   className: string
 }
 
@@ -51,7 +47,7 @@ export default function Carousel({ images, className }: CarouselProps) {
 
   return (
     <Slider {...settings}>
-      {images.map((image: Images, i: number) => {
+      {images.map((image: ImagesType, i: number) => {
         return (
           <div key={i} className={`${className} overflow-hidden`}>
             <img

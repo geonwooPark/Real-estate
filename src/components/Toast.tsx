@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { Alert } from '../interfaces/interfaces'
-import { initAlert } from '../App'
+import { AlertType } from '../interfaces/interfaces'
+import { useAppDispatch } from '../store/store'
+import { initialState, setAlert } from '../store/features/alertSlice'
 
 interface ToastProps {
-  alert: Alert
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>
+  alert: AlertType
 }
 
-export default function Toast({ alert, setAlert }: ToastProps) {
+export default function Toast({ alert }: ToastProps) {
   const [animation, setAnimation] = useState(false)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     const upToast = setTimeout(() => setAnimation(true), 100)
     const downToast = setTimeout(() => setAnimation(false), 2600)
     const closeToast = setTimeout(() => {
-      setAlert(initAlert)
+      dispatch(setAlert(initialState))
     }, 3100)
 
     return () => {
@@ -26,7 +27,7 @@ export default function Toast({ alert, setAlert }: ToastProps) {
 
   return (
     <div
-      className={`fixed z-100 bottom-0 w-full bg-slate-800 px-4 py-2 text-white text-xs text-center border-b-2 border-solid transition duration-500 ease-in-out ${
+      className={`fixed z-[100] bottom-0 w-full bg-slate-800 px-4 py-2 text-white text-xs text-center border-b-2 border-solid transition duration-500 ease-in-out ${
         alert.status === 'error'
           ? 'border-red-600'
           : alert.status === 'success'

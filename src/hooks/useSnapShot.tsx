@@ -1,5 +1,5 @@
 import { DocumentData, doc, onSnapshot } from 'firebase/firestore'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { db } from '../firebase'
 
 export default function useSnapShot<T>(collectionName: string, docId: string) {

@@ -12,7 +12,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BsSend } from 'react-icons/bs'
 import { useLocation } from 'react-router'
 import { auth, db } from '../firebase'
@@ -21,13 +21,15 @@ import { numberToKorean } from '../utils/numberToKorean'
 import ChatRoom from '../components/ChatRoom'
 import { ChatRoomType } from '../interfaces/interfaces'
 import Message from '../components/Message'
-import { ToastContext } from '../App'
 import Spinner from '../components/Spinner'
 import EmptyState from '../components/EmptyState'
+import { useAppDispatch } from '../store/store'
+import { setAlert } from '../store/features/alertSlice'
 
 export default function Chat() {
   const location = useLocation()
   const user1 = auth.currentUser?.uid
+  const dispatch = useAppDispatch()
 
   const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoomType | null>(
     null,
@@ -36,7 +38,6 @@ export default function Chat() {
   const [text, setText] = useState('')
   const [messages, setMessages] = useState<DocumentData[]>([])
   const [pageLoading, setPageLoading] = useState(true)
-  const setAlert = useContext(ToastContext)
 
   const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value)
@@ -141,10 +142,12 @@ export default function Chat() {
         setChatRooms(chatRooms)
       } catch (error) {
         if (error instanceof Error) {
-          setAlert({
-            status: 'error',
-            message: error.message,
-          })
+          dispatch(
+            setAlert({
+              status: 'error',
+              message: error.message,
+            }),
+          )
         }
       } finally {
         setPageLoading(false)

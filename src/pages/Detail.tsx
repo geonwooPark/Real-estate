@@ -1,20 +1,22 @@
 import { DocumentData, doc, getDoc } from 'firebase/firestore'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { db } from '../firebase'
 import { BsShare } from 'react-icons/bs'
 import SideSlider from '../components/SideSlider'
-import { ToastContext } from '../App'
+import { setAlert } from '../store/features/alertSlice'
+import { useAppDispatch } from '../store/store'
 
 const { kakao } = window as any
 
 export default function Detail() {
   const params = useParams()
   const { listingId } = params
+  const dispatch = useAppDispatch()
+
   const [listing, setListing] = useState<DocumentData>({})
   const [showInfo, setShowInfo] = useState(true)
   const [copyUrl, setCopyUrl] = useState(false)
-  const setAlert = useContext(ToastContext)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,10 +32,12 @@ export default function Detail() {
         }
       } catch (error) {
         if (error instanceof Error) {
-          setAlert({
-            status: 'error',
-            message: error.message,
-          })
+          dispatch(
+            setAlert({
+              status: 'error',
+              message: error.message,
+            }),
+          )
         }
       }
     }
