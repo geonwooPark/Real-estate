@@ -15,7 +15,12 @@ import ResearchAddress from '../components/ResearchAddress'
 import Button from '../components/Button'
 import spinner from '../assets/svg/spinner.svg'
 import { auth, db, storage } from '../firebase'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from 'firebase/storage'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useNavigate, useParams } from 'react-router'
 import { Imgs } from '../interfaces/interfaces'
@@ -27,7 +32,9 @@ export default function EditListing() {
   const { listingId } = params
   const navigate = useNavigate()
   const [state, dispatch] = useReducer(formReducer, initialState)
-  const [fileURLs, setfileURLs] = useState<string[]>([])
+  const [URLs, setURLs] = useState<Imgs[]>([])
+  const [deletedURLs, setDeletedURLs] = useState<Imgs[]>([])
+  const [previewURLs, setPreviewURLs] = useState<Imgs[]>([])
   const [images, setImages] = useState<File[]>([])
   const [showResearchAddress, setShowResearchAddress] = useState(false)
   const [btnLoading, setBtnLoading] = useState(false)
@@ -44,7 +51,7 @@ export default function EditListing() {
     }
 
     try {
-      if (fileURLs.length === 0) {
+      if (URLs.length + previewURLs.length === 0) {
         throw new Error('사진을 첨부해주세요.')
       }
       if (state.address === '') {
@@ -60,6 +67,12 @@ export default function EditListing() {
         throw new Error('월세를 입력해주세요.')
       }
 
+      if (deletedURLs) {
+        deletedURLs.forEach((deletedURL) =>
+          deleteObject(ref(storage, deletedURL.path)),
+        )
+      }
+
       const imgs: Imgs[] = []
       for (const image of images) {
         const imgRef = ref(storage, `listings/${Date.now()} - ${image.name}`)
@@ -70,11 +83,10 @@ export default function EditListing() {
       }
 
       await updateDoc(doc(db, 'listings', listingId), {
-        ...state,
-        images: imgs,
+        images: [...URLs, ...imgs],
       })
 
-      navigate(`/profile`)
+      navigate(`/category/${state.itemType}/${listingId}`)
       setAlert({
         status: 'success',
         message: '매물을 성공적으로 수정했습니다.',
@@ -98,7 +110,7 @@ export default function EditListing() {
     }
 
     try {
-      if (fileURLs.length + files.length > 9) {
+      if (URLs.length + previewURLs.length + files.length > 9) {
         throw new Error('이미지는 최대 9개까지 첨부 가능합니다.')
       }
 
@@ -109,7 +121,9 @@ export default function EditListing() {
         reader.onload = () => {
           const result = reader.result
           if (typeof result === 'string') {
-            startTransition(() => setfileURLs((prev) => [...prev, result]))
+            startTransition(() =>
+              setPreviewURLs((prev) => [...prev, { url: result, path: '' }]),
+            )
           }
         }
         reader.readAsDataURL(file)
@@ -139,9 +153,12 @@ export default function EditListing() {
 
       if (docSnap.exists()) {
         const listing: any = { ...docSnap.data() }
+        const arr: Imgs[] = []
+        listing.images.forEach((image: Imgs) => arr.push(image))
+        setURLs(arr)
         dispatch({ type: 'fetch-listing', payload: listing })
-        setPageLoading(false)
       }
+      setPageLoading(false)
     }
     fetchListing()
   }, [listingId])
@@ -165,7 +182,7 @@ export default function EditListing() {
           {isPending ? (
             <div
               className={`${
-                fileURLs.length > 4 ? 'h-[166px]' : 'h-[80px]'
+                previewURLs.length > 4 ? 'h-[166px]' : 'h-[80px]'
               } flex items-center`}
             >
               <img src={spinner} className="h-8 mx-auto" />
@@ -193,27 +210,34 @@ export default function EditListing() {
                 <div className="invisible">
                   <div className="rounded border border-blue-600 w-[70px] h-[70px]" />
                 </div>
-                {fileURLs.map((image, i) => {
+                {URLs.concat(previewURLs).map((elem, i) => {
                   return (
                     <div key={i}>
                       <div className="w-[70px] relative">
                         <img
-                          src={image}
+                          src={elem.url}
                           alt="upload-image"
                           className="w-[70px] h-[70px] rounded border border-gray-400 object-cover"
                         />
                         <button
                           type="button"
                           onClick={() => {
-                            const copy = [...fileURLs]
-                            const copy2 = [...images]
-                            copy.splice(i, 1)
-                            copy2.splice(i, 1)
-                            setfileURLs(copy)
-                            setImages(copy2)
+                            if (URLs.includes(elem)) {
+                              const copy = [...URLs]
+                              copy.splice(i, 1)
+                              setURLs(copy)
+                              setDeletedURLs((prev) => [...prev, elem])
+                            }
+                            if (previewURLs.includes(elem)) {
+                              const copy = [...previewURLs]
+                              const copy2 = [...images]
+                              copy.splice(i - URLs.length, 1)
+                              copy2.splice(i - URLs.length, 1)
+                              setImages(copy2)
+                              setPreviewURLs(copy)
+                            }
                           }}
-                          className="bg-white text-gray-700 rounded-3xl absolute -top-2
-                          -right-2"
+                          className="bg-white text-gray-700 rounded-3xl absolute -top-2 -right-2"
                         >
                           <IoCloseCircleOutline size={20} />
                         </button>

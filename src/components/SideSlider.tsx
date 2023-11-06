@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { auth, db } from '../firebase'
+import { auth, db, storage } from '../firebase'
 import { numberToKorean } from '../utils/numberToKorean'
 import Moment from 'react-moment'
 import Button from './Button'
@@ -24,6 +24,8 @@ import {
 import { useNavigate } from 'react-router'
 import useSnapShot from '../hooks/useSnapShot'
 import { ToastContext } from '../App'
+import { deleteObject, ref } from 'firebase/storage'
+import { Imgs } from '../interfaces/interfaces'
 
 interface SideSliderProps {
   showInfo: boolean
@@ -50,6 +52,9 @@ export default function SideSlider({
       if (confirm) {
         await deleteDoc(doc(db, 'listings', listing.id))
         await deleteDoc(doc(db, 'favorites', listing.id))
+        await listing.images.forEach((image: Imgs) => {
+          deleteObject(ref(storage, image.path))
+        })
         navigate('/profile')
         setAlert({
           status: 'success',
