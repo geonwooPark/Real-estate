@@ -1,9 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuthStatus from '../hooks/useAuthStatus'
 import { auth } from '../firebase'
 import MenuIcon from './MenuIcon'
 import { MapContext, ToastContext } from '../App'
+import DropDownList, { TypeTimer } from './DropDownList'
 
 const { kakao } = window as any
 
@@ -14,23 +15,15 @@ export default function Header() {
   const navigate = useNavigate()
   const { loggedIn, setLoggedIn, checkingStatus } = useAuthStatus()
   const [showMenu, setShowMenu] = useState(false)
-  const setAlert = useContext(ToastContext)
 
   const goHome = () => {
     navigate('/')
-    try {
+    if (map) {
       kakao.maps.load(() => {
         const moveLatLon = new kakao.maps.LatLng(37.574187, 126.976882)
         map.setCenter(moveLatLon)
         map.setLevel(8)
       })
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
-      }
     }
   }
 
@@ -53,17 +46,6 @@ export default function Header() {
                 `}
     >
       <div className="w-full h-[48px] px-4 border-b flex items-center justify-between sm:w-auto sm:border-none">
-        {/* <img
-          src=""
-          alt="logo"
-          className="h-5 my-3 cursor-pointer"
-          onClick={() => {
-            navigate('/')
-            const moveLatLon = new kakao.maps.LatLng(37.574187, 126.976882)
-            map.setCenter(moveLatLon)
-            map.setLevel(8)
-          }}
-        /> */}
         <div onClick={goHome} className="font-bold text-3xl cursor-pointer">
           부동산직거래
         </div>
@@ -77,8 +59,8 @@ export default function Header() {
       <div className="overflow-hidden border-b sm:border-none">
         <div
           className={`w-full transition-transform duration-200 ease-in-out sm:translate-y-0 bg-white
-                      ${showMenu ? 'translate-y-0' : '-translate-y-full'}
-                    `}
+            ${showMenu ? 'translate-y-0' : '-translate-y-full'}
+          `}
         >
           <ul className="px-4 flex flex-col sm:flex-row sm:gap-10 sm:justify-end text-center">
             {loggedIn ? (

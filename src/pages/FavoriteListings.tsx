@@ -15,56 +15,15 @@ import {
 import { auth, db } from '../firebase'
 import { ToastContext } from '../App'
 import Spinner from '../components/Spinner'
+import EmptyState from '../components/EmptyState'
 
 export default function FavoriteListings() {
   const [listings, setListings] = useState<DocumentData[]>([])
   const [lastFetchedListing, setLastFetchedListing] =
     useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null)
-  const [pageLoading, setPageLoading] = useState(false)
+  const [pageLoading, setPageLoading] = useState(true)
   const [btnLoading, setBtnLoading] = useState(false)
   const setAlert = useContext(ToastContext)
-
-  const fetchFavListings = async () => {
-    try {
-      setPageLoading(true)
-      const q = query(
-        collection(db, 'favorites'),
-        where('users', 'array-contains', auth.currentUser?.uid),
-        limit(8),
-      )
-      const docsSnap = await getDocs(q)
-      const lastVisible = docsSnap.docs[docsSnap.docs.length - 1]
-      setLastFetchedListing(lastVisible)
-
-      const promises: DocumentData[] = []
-      docsSnap.forEach(async (doc) => {
-        const q = query(
-          collection(db, 'listings'),
-          where(documentId(), '==', doc.id),
-        )
-        promises.push(getDocs(q))
-      })
-
-      const listings: DocumentData[] = []
-      const docs = await Promise.all(promises)
-      docs.forEach((querySnap) =>
-        querySnap.forEach((doc: DocumentData) =>
-          listings.push({ ...doc.data() }),
-        ),
-      )
-
-      setListings(listings)
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
-      }
-    } finally {
-      setPageLoading(false)
-    }
-  }
 
   const onFetchMore = async () => {
     try {
@@ -111,12 +70,62 @@ export default function FavoriteListings() {
   }
 
   useEffect(() => {
+    const fetchFavListings = async () => {
+      try {
+        setPageLoading(true)
+        const q = query(
+          collection(db, 'favorites'),
+          where('users', 'array-contains', auth.currentUser?.uid),
+          limit(8),
+        )
+        const docsSnap = await getDocs(q)
+        const lastVisible = docsSnap.docs[docsSnap.docs.length - 1]
+        setLastFetchedListing(lastVisible)
+
+        const promises: DocumentData[] = []
+        docsSnap.forEach(async (doc) => {
+          const q = query(
+            collection(db, 'listings'),
+            where(documentId(), '==', doc.id),
+          )
+          promises.push(getDocs(q))
+        })
+
+        const listings: DocumentData[] = []
+        const docs = await Promise.all(promises)
+        docs.forEach((querySnap) =>
+          querySnap.forEach((doc: DocumentData) =>
+            listings.push({ ...doc.data() }),
+          ),
+        )
+
+        setListings(listings)
+      } catch (error) {
+        if (error instanceof Error) {
+          setAlert({
+            status: 'error',
+            message: error.message,
+          })
+        }
+      } finally {
+        setPageLoading(false)
+      }
+    }
     fetchFavListings()
   }, [])
 
   if (pageLoading) return <Spinner />
 
-  return listings.length !== 0 ? (
+  if (listings.length === 0) {
+    return (
+      <EmptyState
+        label="내가 찜한 매물이 없습니다!"
+        className="h-[calc(100vh-48px)]"
+      />
+    )
+  }
+
+  return (
     <section className="max-w-6xl px-4 mx-auto">
       <h4 className="text-center mb-0">관심 있는 매물</h4>
       <main>
@@ -141,7 +150,5 @@ export default function FavoriteListings() {
         </div>
       )}
     </section>
-  ) : (
-    <h4 className="text-center text-gray-400">내가 찜한 매물이 없습니다!</h4>
   )
 }

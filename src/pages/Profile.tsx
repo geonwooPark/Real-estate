@@ -77,48 +77,47 @@ export default function Profile() {
     }
   }
 
-  const onImageEdit = async () => {
-    if (!imageFile || !auth.currentUser) {
-      return
-    }
-    try {
-      setImageLoading(true)
-      const docSnap = await getDoc(doc(db, 'users', auth.currentUser.uid))
-      const user = docSnap.data()
-      if (user?.photoPath) {
-        await deleteObject(ref(storage, user.photoPath))
-      }
-
-      const imgRef = ref(storage, `profile/${Date.now()} - ${user?.uid}`)
-
-      const result = await uploadBytes(imgRef, imageFile)
-      const url = await getDownloadURL(ref(storage, result.ref.fullPath))
-      await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-        photoUrl: url,
-        photoPath: result.ref.fullPath,
-      })
-      await updateProfile(auth.currentUser, {
-        photoURL: url,
-      })
-      setImageFile(null)
-      setAlert({
-        status: 'success',
-        message: '프로필 사진을 성공적으로 변경했습니다.',
-      })
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: '프로필 사진 변경에 실패했습니다.',
-        })
-      }
-    } finally {
-      setImageLoading(false)
-    }
-  }
-
   useEffect(() => {
     if (imageFile) {
+      const onImageEdit = async () => {
+        if (!imageFile || !auth.currentUser) {
+          return
+        }
+        try {
+          setImageLoading(true)
+          const docSnap = await getDoc(doc(db, 'users', auth.currentUser.uid))
+          const user = docSnap.data()
+          if (user?.photoPath) {
+            await deleteObject(ref(storage, user.photoPath))
+          }
+
+          const imgRef = ref(storage, `profile/${Date.now()} - ${user?.uid}`)
+
+          const result = await uploadBytes(imgRef, imageFile)
+          const url = await getDownloadURL(ref(storage, result.ref.fullPath))
+          await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+            photoUrl: url,
+            photoPath: result.ref.fullPath,
+          })
+          await updateProfile(auth.currentUser, {
+            photoURL: url,
+          })
+          setImageFile(null)
+          setAlert({
+            status: 'success',
+            message: '프로필 사진을 성공적으로 변경했습니다.',
+          })
+        } catch (error) {
+          if (error instanceof Error) {
+            setAlert({
+              status: 'error',
+              message: '프로필 사진 변경에 실패했습니다.',
+            })
+          }
+        } finally {
+          setImageLoading(false)
+        }
+      }
       onImageEdit()
     }
   }, [imageFile])

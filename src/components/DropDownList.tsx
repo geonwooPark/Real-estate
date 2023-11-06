@@ -2,11 +2,13 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 
 interface DropDownListProps {
   visibility: boolean
+  className?: string
 }
-type TypeTimer = ReturnType<typeof setTimeout>
+export type TypeTimer = ReturnType<typeof setTimeout>
 
 export default function DropDownList({
   children,
+  className,
   visibility,
 }: PropsWithChildren<DropDownListProps>) {
   const [animation, setAnimation] = useState(false)
@@ -17,7 +19,7 @@ export default function DropDownList({
     } else {
       timer = setTimeout(() => {
         setAnimation(false)
-      }, 400)
+      }, 200)
     }
 
     return () => clearTimeout(timer)
@@ -25,7 +27,9 @@ export default function DropDownList({
 
   return (
     <div
-      className={visibility ? 'animate-slideFadeIn' : 'animate-slideFadeOut'}
+      className={`${className} ${
+        visibility ? 'animate-slideFadeIn' : 'animate-slideFadeOut'
+      }`}
     >
       {animation && children}
     </div>

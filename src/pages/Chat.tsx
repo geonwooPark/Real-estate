@@ -23,6 +23,7 @@ import { TypeChatRoom } from '../interfaces/interfaces'
 import Message from '../components/Message'
 import { ToastContext } from '../App'
 import Spinner from '../components/Spinner'
+import EmptyState from '../components/EmptyState'
 
 export default function Chat() {
   const location = useLocation()
@@ -34,7 +35,7 @@ export default function Chat() {
   const [chatRooms, setChatRooms] = useState<TypeChatRoom[]>([])
   const [text, setText] = useState('')
   const [messages, setMessages] = useState<DocumentData[]>([])
-  const [pageLoading, setPageLoading] = useState(false)
+  const [pageLoading, setPageLoading] = useState(true)
   const setAlert = useContext(ToastContext)
 
   const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,53 +80,6 @@ export default function Chat() {
     return () => unsub()
   }
 
-  const getChatList = async () => {
-    try {
-      setPageLoading(true)
-      const q = query(
-        collection(db, 'messages'),
-        where('users', 'array-contains', user1),
-      )
-      const querySnap = await getDocs(q)
-      const messages = querySnap.docs.map((doc) => doc.data())
-
-      const chatRooms: TypeChatRoom[] = []
-      for (const message of messages) {
-        const listingRef = doc(db, 'listings', message.listingId)
-        const meRef = doc(
-          db,
-          'users',
-          message.users.find((id: string) => id === user1),
-        )
-        const otherRef = doc(
-          db,
-          'users',
-          message.users.find((id: string) => id !== user1),
-        )
-
-        const listingdDoc = await getDoc(listingRef)
-        const meDoc = await getDoc(meRef)
-        const otherDoc = await getDoc(otherRef)
-
-        chatRooms.push({
-          listing: listingdDoc.data(),
-          me: meDoc.data(),
-          other: otherDoc.data(),
-        })
-      }
-      setChatRooms(chatRooms)
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
-      }
-    } finally {
-      setPageLoading(false)
-    }
-  }
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!user1 || !currentChatRoom) {
@@ -151,6 +105,52 @@ export default function Chat() {
   }
 
   useEffect(() => {
+    const getChatList = async () => {
+      try {
+        const q = query(
+          collection(db, 'messages'),
+          where('users', 'array-contains', user1),
+        )
+        const querySnap = await getDocs(q)
+        const messages = querySnap.docs.map((doc) => doc.data())
+
+        const chatRooms: TypeChatRoom[] = []
+        for (const message of messages) {
+          const listingRef = doc(db, 'listings', message.listingId)
+          const meRef = doc(
+            db,
+            'users',
+            message.users.find((id: string) => id === user1),
+          )
+          const otherRef = doc(
+            db,
+            'users',
+            message.users.find((id: string) => id !== user1),
+          )
+
+          const listingdDoc = await getDoc(listingRef)
+          const meDoc = await getDoc(meRef)
+          const otherDoc = await getDoc(otherRef)
+
+          chatRooms.push({
+            listing: listingdDoc.data(),
+            me: meDoc.data(),
+            other: otherDoc.data(),
+          })
+        }
+        setChatRooms(chatRooms)
+      } catch (error) {
+        if (error instanceof Error) {
+          setAlert({
+            status: 'error',
+            message: error.message,
+          })
+        }
+      } finally {
+        setPageLoading(false)
+      }
+    }
+
     if (location.state) {
       getChat(location.state)
     }
@@ -232,9 +232,10 @@ export default function Chat() {
             </form>
           </div>
         ) : (
-          <h4 className="w-[80%] text-center text-gray-400">
-            채팅방을 선택해주세요
-          </h4>
+          <EmptyState
+            label="채팅방을 선택해주세요!"
+            className="h-[calc(100vh-48px)]"
+          />
         )}
       </div>
     </section>

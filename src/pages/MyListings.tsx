@@ -15,41 +15,15 @@ import {
 import { auth, db } from '../firebase'
 import { ToastContext } from '../App'
 import Spinner from '../components/Spinner'
+import EmptyState from '../components/EmptyState'
 
 export default function MyListings() {
   const [listings, setListings] = useState<DocumentData[]>([])
   const [lastFetchedListing, setLastFetchedListing] =
     useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null)
-  const [pageLoading, setPageLoading] = useState(false)
+  const [pageLoading, setPageLoading] = useState(true)
   const [btnLoading, setBtnLoading] = useState(false)
   const setAlert = useContext(ToastContext)
-
-  const fetchMyListings = async () => {
-    try {
-      setPageLoading(true)
-      const q = query(
-        collection(db, 'listings'),
-        where('postedBy', '==', auth.currentUser?.uid),
-        orderBy('publishedAt', 'desc'),
-        limit(8),
-      )
-      const querySnap = await getDocs(q)
-      const lastVisible = querySnap.docs[querySnap.docs.length - 1]
-      setLastFetchedListing(lastVisible)
-      const listings: DocumentData[] = []
-      querySnap.forEach((doc) => listings.push(doc.data()))
-      setListings(listings)
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
-      }
-    } finally {
-      setPageLoading(false)
-    }
-  }
 
   const onFetchMore = async () => {
     try {
@@ -80,12 +54,46 @@ export default function MyListings() {
   }
 
   useEffect(() => {
+    const fetchMyListings = async () => {
+      try {
+        const q = query(
+          collection(db, 'listings'),
+          where('postedBy', '==', auth.currentUser?.uid),
+          orderBy('publishedAt', 'desc'),
+          limit(8),
+        )
+        const querySnap = await getDocs(q)
+        const lastVisible = querySnap.docs[querySnap.docs.length - 1]
+        setLastFetchedListing(lastVisible)
+        const listings: DocumentData[] = []
+        querySnap.forEach((doc) => listings.push(doc.data()))
+        setListings(listings)
+      } catch (error) {
+        if (error instanceof Error) {
+          setAlert({
+            status: 'error',
+            message: error.message,
+          })
+        }
+      } finally {
+        setPageLoading(false)
+      }
+    }
     fetchMyListings()
   }, [])
 
   if (pageLoading) return <Spinner />
 
-  return listings.length !== 0 ? (
+  if (listings.length === 0) {
+    return (
+      <EmptyState
+        label="등록된 매물이 없습니다!"
+        className="h-[calc(100vh-48px)]"
+      />
+    )
+  }
+
+  return (
     <section className="max-w-6xl px-4 mx-auto">
       <h4 className="text-center mb-0">내가 올린 매물</h4>
       <main>
@@ -110,7 +118,5 @@ export default function MyListings() {
         </div>
       )}
     </section>
-  ) : (
-    <h4 className="text-center text-gray-400">등록된 매물이 없습니다!</h4>
   )
 }

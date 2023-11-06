@@ -19,7 +19,7 @@ export type InitialState = {
   monthly: number
   maintenanceFee: number
   availableDate: string
-  images?: {
+  images: {
     url: string
     path: string
   }[]
@@ -56,7 +56,7 @@ export const initialState: InitialState = {
   monthly: 0,
   maintenanceFee: 0,
   availableDate: '',
-  images: undefined,
+  images: [],
   publishedAt: undefined,
   postedBy: '',
   id: '',

@@ -74,7 +74,7 @@ export default function CreateListing() {
         users: [],
       })
 
-      navigate(`/profile`)
+      navigate(`/profile/my-listings`)
       setAlert({
         status: 'success',
         message: '매물을 성공적으로 등록했습니다.',

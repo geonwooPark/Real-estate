@@ -2,7 +2,6 @@ import { DocumentData, doc, getDoc } from 'firebase/firestore'
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { db } from '../firebase'
-import Spinner from '../components/Spinner'
 import { BsShare } from 'react-icons/bs'
 import SideSlider from '../components/SideSlider'
 import { ToastContext } from '../App'
@@ -15,34 +14,29 @@ export default function Detail() {
   const [listing, setListing] = useState<DocumentData>({})
   const [showInfo, setShowInfo] = useState(true)
   const [copyUrl, setCopyUrl] = useState(false)
-  const [pageLoading, setPageLoading] = useState(false)
   const setAlert = useContext(ToastContext)
 
-  const fetchData = async () => {
-    try {
-      setPageLoading(true)
-      if (!listingId) {
-        return
-      }
-      const docSnap = await getDoc(doc(db, 'listings', listingId))
-
-      if (docSnap.exists()) {
-        const listing: DocumentData = { ...docSnap.data() }
-        setListing(listing)
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        setAlert({
-          status: 'error',
-          message: error.message,
-        })
-      }
-    } finally {
-      setPageLoading(false)
-    }
-  }
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!listingId) {
+          return
+        }
+        const docSnap = await getDoc(doc(db, 'listings', listingId))
+
+        if (docSnap.exists()) {
+          const listing: DocumentData = { ...docSnap.data() }
+          setListing(listing)
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          setAlert({
+            status: 'error',
+            message: error.message,
+          })
+        }
+      }
+    }
     fetchData()
   }, [])
 
@@ -78,11 +72,6 @@ export default function Detail() {
       marker.setMap(map)
     })
   }, [listing])
-
-  // data fetch 로딩중 스피너 사용 시 에러 발생(동작은 문제없음)
-  // if (pageLoading) {
-  //   return <Spinner />
-  // }
 
   return (
     <main className="relative overflow-hidden">

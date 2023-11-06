@@ -14,8 +14,8 @@ module.exports = {
         },
       },
       animation: {
-        slideFadeIn: 'slideFadeIn 0.4s ease-in-out',
-        slideFadeOut: 'slideFadeOut 0.4s ease-in-out',
+        slideFadeIn: 'slideFadeIn 0.2s ease-in-out',
+        slideFadeOut: 'slideFadeOut 0.2s ease-in-out',
       },
     },
   },
