@@ -27,6 +27,7 @@ import { deleteObject, ref } from 'firebase/storage'
 import { ImagesType, OptionsType } from '../interfaces/interfaces'
 import { setAlert } from '../store/features/alertSlice'
 import { useAppDispatch } from '../store/store'
+import Editor from './Editor'
 
 interface SideSliderProps {
   showInfo: boolean
@@ -193,7 +194,9 @@ export default function SideSlider({
               })}
             </ul>
             <hr />
-            <p className="mt-6">{listing.detail}</p>
+            <div className="mt-6">
+              <Editor content={listing.detail} readOnly={true} />
+            </div>
           </div>
         </div>
         <div className="w-full bg-white px-4 py-2 border-t-[1px] flex">

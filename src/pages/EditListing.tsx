@@ -20,6 +20,7 @@ import { ImagesType } from '../interfaces/interfaces'
 import Spinner from '../components/Spinner'
 import { setAlert } from '../store/features/alertSlice'
 import { useAppDispatch } from '../store/store'
+import Editor from '../components/Editor'
 
 export default function EditListing() {
   const params = useParams()
@@ -78,6 +79,7 @@ export default function EditListing() {
       }
 
       await updateDoc(doc(db, 'listings', listingId), {
+        ...state,
         images: [...URLs, ...imgs],
       })
 
@@ -505,7 +507,14 @@ export default function EditListing() {
         <h4>
           상세설명<span className="text-red-600">*</span>
         </h4>
-        <textarea
+        <div className="mb-6 h-[240px] border border-gray-400 text-gray-800 rounded">
+          <Editor
+            content={state.detail}
+            dispatch={dispatch}
+            placeholder="상세한 설명을 적어주세요."
+          />
+        </div>
+        {/* <textarea
           cols={30}
           rows={10}
           value={state.detail}
@@ -515,7 +524,7 @@ export default function EditListing() {
             dispatch({ type: 'write-detail', payload: e.target.value })
           }
           className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full mb-6"
-        ></textarea>
+        ></textarea> */}
 
         <Button
           label="매물 수정하기"
