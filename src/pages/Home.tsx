@@ -139,7 +139,7 @@ export default function Home() {
           window.history.pushState(
             '',
             '',
-            `http://localhost:3000/category/${listings[i].itemType}/${listings[i].id}`,
+            `/category/${listings[i].itemType}/${listings[i].id}`,
           )
           setShowInfo(true)
           setCurrentListing(listings[i])
