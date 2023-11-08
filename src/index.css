@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    /* @apply bg-sky-100; */
-  }
-
   h1 {
     @apply text-xl text-center mt-6 font-bold sm:text-3xl;
   }

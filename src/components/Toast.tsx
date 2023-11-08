@@ -33,7 +33,7 @@ export default function Toast({ alert }: ToastProps) {
           : alert.status === 'success'
           ? 'border-green-600'
           : 'border-none'
-      } ${animation ? 'translate-y-0' : 'translate-y-10'}`}
+      } ${animation ? 'translate-y-0' : 'translate-y-full'}`}
     >
       {alert.message}
     </div>

@@ -116,9 +116,9 @@ export default function SideSlider({
       <aside
         className={`w-full md:w-[300px] lg:w-[400px] border-l bg-white md:absolute top-0 right-0 z-10 transition-transform duration-200 ease-in-out
         ${
-          !showInfo
-            ? 'md:translate-x-[300px] lg:translate-x-[400px]'
-            : 'translate-x-0'
+          showInfo
+            ? 'translate-x-0'
+            : 'md:translate-x-[300px] lg:translate-x-[400px]'
         }`}
       >
         <div
@@ -130,12 +130,12 @@ export default function SideSlider({
             className={showInfo ? 'rotate-0' : 'rotate-180 -translate-x-2'}
           />
         </div>
-        <div className="md:h-[calc(100vh-48px-61px)] md:overflow-y-scroll hide-scroll">
+        <div className="md:h-[calc(100vh-48px)] md:overflow-y-scroll hide-scroll pb-[60px]">
           <Carousel
             images={listing.images}
             className="bg-gray-300 h-[300px] md:h-[200px] lg:h-[300px] "
           />
-          <div className="p-4 relative">
+          <div className="relative p-4">
             <div className="text-right text-gray-700 mb-1">
               <small>
                 <Moment fromNow>{listing.publishedAt?.toDate()}</Moment>
@@ -199,53 +199,56 @@ export default function SideSlider({
             </div>
           </div>
         </div>
-        <div className="w-full bg-white px-4 py-2 border-t-[1px] flex">
-          {listing.postedBy === auth.currentUser?.uid ? (
-            <>
-              <Button
-                label="수정하기"
-                type="button"
-                level="ghost"
-                size="s"
-                fullWidth={true}
-                onClick={editListing}
-                className="mr-2"
-              />
-              <Button
-                label="삭제하기"
-                type="button"
-                level="ghost"
-                size="s"
-                fullWidth={true}
-                onClick={deleteListing}
-                className="border-red-600 text-red-600"
-              />
-            </>
-          ) : (
-            <>
-              <Button
-                label="찜"
-                type="button"
-                level="outline"
-                size="s"
-                icon={
-                  value?.users.includes(auth.currentUser?.uid as string)
-                    ? AiFillHeart
-                    : AiOutlineHeart
-                }
-                className="mr-2 text-red-400"
-                onClick={likeListing}
-              />
-              <Button
-                label="연락하기"
-                type="button"
-                level="primary"
-                size="s"
-                fullWidth={true}
-                onClick={startChat}
-              />
-            </>
-          )}
+        <div className="absolute bottom-0 w-full">
+          <div className="h-[40px] bg-gradient-to-t from-white	"></div>
+          <div className="w-full bg-white px-4 py-2 border-t-[1px] flex">
+            {listing.postedBy === auth.currentUser?.uid ? (
+              <>
+                <Button
+                  label="수정하기"
+                  type="button"
+                  level="ghost"
+                  size="s"
+                  fullWidth={true}
+                  onClick={editListing}
+                  className="mr-2"
+                />
+                <Button
+                  label="삭제하기"
+                  type="button"
+                  level="ghost"
+                  size="s"
+                  fullWidth={true}
+                  onClick={deleteListing}
+                  className="border-red-600 text-red-600"
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  label="찜"
+                  type="button"
+                  level="outline"
+                  size="s"
+                  icon={
+                    value?.users.includes(auth.currentUser?.uid as string)
+                      ? AiFillHeart
+                      : AiOutlineHeart
+                  }
+                  className="mr-2 text-red-400"
+                  onClick={likeListing}
+                />
+                <Button
+                  label="연락하기"
+                  type="button"
+                  level="primary"
+                  size="s"
+                  fullWidth={true}
+                  onClick={startChat}
+                />
+              </>
+            )}
+          </div>
         </div>
       </aside>
     )

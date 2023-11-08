@@ -13,7 +13,7 @@ export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { loggedIn, unread, setLoggedIn, checkingStatus } = useAuthStatus()
+  const { loggedIn, unread, setLoggedIn } = useAuthStatus()
   const [showMenu, setShowMenu] = useState(false)
 
   const goHome = () => {
