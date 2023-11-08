@@ -2,6 +2,7 @@ import React from 'react'
 import useSnapShot from '../hooks/useSnapShot'
 import { FaUserCircle } from 'react-icons/fa'
 import { ChatRoomType, MessageType } from '../interfaces/interfaces'
+import { auth } from '../firebase'
 
 interface ChatRoomProps {
   chatRoom: ChatRoomType
@@ -25,13 +26,13 @@ export default function ChatRoom({
 
   return (
     <div
-      className={`sm:flex sm:items-center p-2 border-b-[1px] overflow-hidden cursor-pointer ${
+      className={`flex flex-col justify-center sm:flex-row sm:items-center p-2 border-b-[1px] overflow-hidden cursor-pointer ${
         chatRoom.listing?.id === currentChatRoom?.listing?.id &&
         chatRoom.other?.name === currentChatRoom?.other?.name &&
         'bg-gray-100 shadow-[inset_0px_0px_10px_#6868681f]'
       }`}
       onClick={() => {
-        setCurrentChatRoom(chatRoom)
+        setCurrentChatRoom({ ...chatRoom })
       }}
     >
       <div>
@@ -49,6 +50,12 @@ export default function ChatRoom({
         <p>{chatRoom.other?.name}</p>
         <small className="text-gray-500">{value?.lastText}</small>
       </div>
+
+      {auth.currentUser?.uid !== value?.lastSender && value?.lastUnread && (
+        <span className="bg-red-100 text-red-600 text-xs text-center font-medium px-2.5 py-0.5 mt-2 sm:mt-0 rounded-full dark:bg-red-600 dark:text-red-300">
+          <small>New</small>
+        </span>
+      )}
     </div>
   )
 }

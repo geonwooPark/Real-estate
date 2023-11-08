@@ -1,4 +1,4 @@
-import { DocumentData } from 'firebase/firestore'
+import { DocumentData, Timestamp } from 'firebase/firestore'
 
 export interface AlertType {
   status: 'error' | 'success' | 'pending'
@@ -26,5 +26,6 @@ export interface MessageType {
   lastSender?: string
   lastText?: string
   lastUnread?: boolean
+  updatedAt?: Timestamp
   users: string[]
 }

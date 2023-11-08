@@ -37,7 +37,6 @@ export default function Chat() {
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([])
   const [text, setText] = useState('')
   const [messages, setMessages] = useState<DocumentData[]>([])
-  const [pageLoading, setPageLoading] = useState(true)
 
   const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value)
@@ -51,34 +50,6 @@ export default function Chat() {
     const buyer = await getDoc(doc(db, 'users', user1))
     const seller = await getDoc(doc(db, 'users', listing.postedBy))
     setCurrentChatRoom({ listing, me: buyer.data(), other: seller.data() })
-  }
-
-  const messagesSnapShot = async () => {
-    const user2 = currentChatRoom?.other?.uid
-    const chatId =
-      user1 && user1 > user2
-        ? `${user1}.${user2}.${currentChatRoom?.listing?.id}`
-        : `${user2}.${user1}.${currentChatRoom?.listing?.id}`
-
-    const messagesRef = collection(db, 'messages', `${chatId}/chat`)
-    const q = query(messagesRef, orderBy('sentAt', 'asc'))
-
-    const unsub = onSnapshot(q, (querySnapShot) => {
-      const messages: DocumentData[] = []
-      querySnapShot.forEach((doc) => messages.push(doc.data()))
-      setMessages(messages)
-    })
-
-    // const docSnap = await getDoc(doc(db, 'messages', chatId))
-    // if (docSnap.exists()) {
-    //   if (docSnap.data().lastSender !== user1 && docSnap.data().lastUnread) {
-    //     await updateDoc(doc(db, 'messages', chatId), {
-    //       lastUnread: false,
-    //     })
-    //   }
-    // }
-
-    return () => unsub()
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -101,75 +72,90 @@ export default function Chat() {
       lastText: text,
       lastSender: user1,
       lastUnread: true,
+      updatedAt: Timestamp.fromDate(new Date()),
     })
     setText('')
   }
 
   useEffect(() => {
-    const getChatList = async () => {
-      try {
-        const q = query(
-          collection(db, 'messages'),
-          where('users', 'array-contains', user1),
-        )
-        const querySnap = await getDocs(q)
-        const messages = querySnap.docs.map((doc) => doc.data())
-
-        const chatRooms: ChatRoomType[] = []
-        for (const message of messages) {
-          const listingRef = doc(db, 'listings', message.listingId)
-          const meRef = doc(
-            db,
-            'users',
-            message.users.find((id: string) => id === user1),
-          )
-          const otherRef = doc(
-            db,
-            'users',
-            message.users.find((id: string) => id !== user1),
-          )
-
-          const listingdDoc = await getDoc(listingRef)
-          const meDoc = await getDoc(meRef)
-          const otherDoc = await getDoc(otherRef)
-
-          chatRooms.push({
-            listing: listingdDoc.data(),
-            me: meDoc.data(),
-            other: otherDoc.data(),
-          })
-        }
-        setChatRooms(chatRooms)
-      } catch (error) {
-        if (error instanceof Error) {
-          dispatch(
-            setAlert({
-              status: 'error',
-              message: error.message,
-            }),
-          )
-        }
-      } finally {
-        setPageLoading(false)
-      }
-    }
-
     if (location.state) {
       getChat(location.state)
+    }
+  }, [])
+
+  useEffect(() => {
+    const getChatList = async () => {
+      const q = query(
+        collection(db, 'messages'),
+        where('users', 'array-contains', user1),
+        orderBy('updatedAt', 'desc'),
+      )
+      const querySnap = await getDocs(q)
+      const messages = querySnap.docs.map((doc) => doc.data())
+
+      const chatRooms: ChatRoomType[] = []
+      for (const message of messages) {
+        const listingRef = doc(db, 'listings', message.listingId)
+        const meRef = doc(
+          db,
+          'users',
+          message.users.find((id: string) => id === user1),
+        )
+        const otherRef = doc(
+          db,
+          'users',
+          message.users.find((id: string) => id !== user1),
+        )
+
+        const listingdDoc = await getDoc(listingRef)
+        const meDoc = await getDoc(meRef)
+        const otherDoc = await getDoc(otherRef)
+
+        chatRooms.push({
+          listing: listingdDoc.data(),
+          me: meDoc.data(),
+          other: otherDoc.data(),
+        })
+      }
+      setChatRooms(chatRooms)
     }
     getChatList()
   }, [])
 
   useEffect(() => {
+    const messagesSnapShot = async () => {
+      const user2 = currentChatRoom?.other?.uid
+      const chatId =
+        user1 && user1 > user2
+          ? `${user1}.${user2}.${currentChatRoom?.listing?.id}`
+          : `${user2}.${user1}.${currentChatRoom?.listing?.id}`
+
+      const messagesRef = collection(db, 'messages', `${chatId}/chat`)
+      const q = query(messagesRef, orderBy('sentAt', 'asc'))
+
+      const unsub = onSnapshot(q, (querySnapShot) => {
+        const messages: DocumentData[] = []
+        querySnapShot.forEach((doc) => messages.push(doc.data()))
+        setMessages(messages)
+      })
+
+      const docSnap = await getDoc(doc(db, 'messages', chatId))
+      if (docSnap.exists()) {
+        if (docSnap.data().lastSender !== user1 && docSnap.data().lastUnread) {
+          await updateDoc(doc(db, 'messages', chatId), {
+            lastUnread: false,
+          })
+        }
+      }
+      return () => unsub()
+    }
     messagesSnapShot()
   }, [currentChatRoom])
-
-  if (pageLoading) return <Spinner />
 
   return (
     <section className="max-w-6xl px-4 mx-auto">
       <div className="flex">
-        <div className="min-w-[68px] sm:w-[20%] h-[calc(100vh-48px)] border-l-[1px] border-r-[1px]">
+        <div className="min-w-[68px] sm:w-[30%] h-[calc(100vh-48px)] border-l-[1px] border-r-[1px]">
           {chatRooms.map((chatRoom, i) => {
             return (
               <ChatRoom
@@ -183,7 +169,7 @@ export default function Chat() {
           })}
         </div>
         {currentChatRoom ? (
-          <div className="w-full sm:w-[80%] h-[calc(100vh-48px)] relative border-r-[1px]">
+          <div className="w-full sm:w-[70%] h-[calc(100vh-48px)] relative border-r-[1px]">
             <div className="border-b-[1px]">
               <h4 className="text-center mt-2 mb-2">
                 {currentChatRoom.other?.name}
@@ -237,7 +223,7 @@ export default function Chat() {
         ) : (
           <EmptyState
             label="채팅방을 선택해주세요!"
-            className="h-[calc(100vh-48px)]"
+            className="w-[70%] h-[calc(100vh-48px)]"
           />
         )}
       </div>

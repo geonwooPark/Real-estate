@@ -17,22 +17,25 @@ export default function Message({
 
   return (
     <div
-      className={`mb-1 p-1 ${message.sender === user1 ? 'text-end' : ''}`}
+      className={`text-sm mb-2 ${message.sender === user1 ? 'text-end' : ''}`}
       ref={scrollRef}
     >
       <p
-        className={`px-4 py-2 max-w-[50%] inline-block rounded-sm break-all	 ${
-          message.sender === user1
-            ? 'bg-yellow-400 text-gray-700'
-            : 'bg-gray-400 text-white'
-        } `}
+        className={`px-4 py-2 max-w-[50%] inline-block rounded-sm break-all	 
+          ${
+            message.sender === user1
+              ? 'bg-yellow-400 text-gray-700'
+              : 'bg-gray-400 text-white'
+          }`}
       >
         {message.text}
         <br />
+      </p>
+      <div className="text-gray-400">
         <small>
           <Moment fromNow>{message.sentAt.toDate()}</Moment>
         </small>
-      </p>
+      </div>
     </div>
   )
 }

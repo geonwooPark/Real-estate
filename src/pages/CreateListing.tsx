@@ -469,18 +469,6 @@ export default function CreateListing() {
             placeholder="상세한 설명을 적어주세요."
           />
         </div>
-        {/* <textarea
-          cols={30}
-          rows={10}
-          value={state.detail}
-          required
-          placeholder="상세한 설명을 적어주세요."
-          onChange={(e) =>
-            dispatch({ type: 'write-detail', payload: e.target.value })
-          }
-          className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full mb-6"
-        ></textarea> */}
-
         <Button
           label="매물 등록"
           type="submit"
