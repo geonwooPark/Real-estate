@@ -1,70 +1,113 @@
-# Getting Started with Create React App
+# React 부동산 직거래 웹사이트
+**개발기간: 2023.09.06 ~ 2022.09.28 (약 3주)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 배포 주소
+> [https://real-estate-red-two.vercel.app/](https://real-estate-red-two.vercel.app/) <br>
 
-## Available Scripts
+## 프로젝트 소개
 
-In the project directory, you can run:
+부동산을 사고팔 때, 중개업체를 거치지 않고 직거래로 거래를 진행하고 싶은 사람들을 위해 준비한 웹사이트 입니다. 부동산 거래를 간편하고 효율적으로 진행할 수 있는 플랫폼으로, 구매자와 판매자 간의 직거래를 촉진하고자 합니다. 웹사이트를 통해 부동산 거래를 직거래로 진행할 수 있는 다양한 기회를 제공하고, 중개업체의 수수료를 줄일 수 있도록 돕고 있습니다.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+사이트를 방문하여 다양한 부동산 매물을 확인하고, 직거래로 부동산 거래의 혜택을 누려보세요.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
+## 주요 기능
 
-### `npm test`
+### ⭐️ 지도
+- 카카오맵 API를 사용한 넓은 지도를 제공해 원하는 지역의 매물을 한 눈에 확인할 수 있습니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### ⭐️ 다양한 옵션
+- 매매, 전세, 월세 등 다양한 유형의 매물을 제공합니다. 또한 검색을 통해 원하는 지역에 맞는 부동산을 쉽게 찾을 수 있습니다.
 
-### `npm run build`
+### ⭐️ 직거래 채팅
+- 관심있는 부동산 매물에 대한 질문이나 협상을 웹사이트 내에서 직접 판매자와 소통할 수 있습니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### ⭐️ 매물 등록
+- 나의 매물에 다양한 조건을 설정하여 간단하게 등록할 수 있습니다.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 폴더 구조
+```
+📦src
+ ┣ 📂assets
+ ┃ ┗ 📂svg
+ ┃ ┃ ┣ 📜custom.d.ts
+ ┃ ┃ ┗ 📜spinner.svg
+ ┣ 📂components
+ ┃ ┣ 📜Button.tsx
+ ┃ ┣ 📜Carousel.tsx
+ ┃ ┣ 📜ChatRoom.tsx
+ ┃ ┣ 📜DropdownMenu.tsx
+ ┃ ┣ 📜Editor.tsx
+ ┃ ┣ 📜EmptyState.tsx
+ ┃ ┣ 📜Header.tsx
+ ┃ ┣ 📜Input.tsx
+ ┃ ┣ 📜ListingItem.tsx
+ ┃ ┣ 📜MenuIcon.tsx
+ ┃ ┣ 📜Message.tsx
+ ┃ ┣ 📜OptionBtn.tsx
+ ┃ ┣ 📜PrivateRoute.tsx
+ ┃ ┣ 📜ResearchAddress.tsx
+ ┃ ┣ 📜SideSlider.tsx
+ ┃ ┣ 📜Spinner.tsx
+ ┃ ┗ 📜Toast.tsx
+ ┣ 📂hooks
+ ┃ ┣ 📜useAuthStatus.tsx
+ ┃ ┗ 📜useSnapShot.tsx
+ ┣ 📂interfaces
+ ┃ ┗ 📜interfaces.ts
+ ┣ 📂pages
+ ┃ ┣ 📜Chat.tsx
+ ┃ ┣ 📜CreateListing.tsx
+ ┃ ┣ 📜Detail.tsx
+ ┃ ┣ 📜EditListing.tsx
+ ┃ ┣ 📜FavoriteListings.tsx
+ ┃ ┣ 📜ForgotPassword.tsx
+ ┃ ┣ 📜Home.tsx
+ ┃ ┣ 📜MyListings.tsx
+ ┃ ┣ 📜Profile.tsx
+ ┃ ┣ 📜Signin.tsx
+ ┃ ┗ 📜Signup.tsx
+ ┣ 📂reducers
+ ┃ ┗ 📜formReducer.tsx
+ ┣ 📂store
+ ┃ ┣ 📂features
+ ┃ ┃ ┣ 📜alertSlice.ts
+ ┃ ┃ ┗ 📜mapSlice.ts
+ ┃ ┗ 📜store.ts
+ ┣ 📂utils
+ ┃ ┗ 📜numberToKorean.ts
+ ┣ 📜App.tsx
+ ┣ 📜firebase.ts
+ ┣ 📜index.css
+ ┗ 📜index.tsx
+```
+---
 
-### `npm run eject`
+## 기술 스택
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Environment
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=Visual%20Studio%20Code&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white)
+![Github](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white)             
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Config
+![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)        
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Development
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white)
+![Tailwind-CSS](https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=Tailwindcss&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white)
+![RTK](https://img.shields.io/badge/Redux_Toolkit-764ABC?style=for-the-badge&logo=Redux&logoColor=white)
+---
+## 화면 구성
+| 로그인 페이지  |  회원가입 페이지   |
+| :-------------------------------------------: | :------------: |
+|  <img width="400" alt="스크린샷 2023-11-08 오후 7 04 19" src="https://github.com/geonwooPark/Real-estate/assets/136573728/f05a1b9b-7d67-418b-bebf-94b824136e3a"> |  <img width="400" alt="스크린샷 2023-11-08 오후 7 04 28" src="https://github.com/geonwooPark/Real-estate/assets/136573728/e04f154c-8647-4a04-bce6-3dfd7b32f423">|  
+| 메인 페이지   |  상세 페이지   |  
+| <img width="400" alt="스크린샷 2023-11-08 오후 7 04 52" src="https://github.com/geonwooPark/Real-estate/assets/136573728/a9271aa7-311c-4d5b-980e-66eb281e7d9d"> |  <img width="400" alt="스크린샷 2023-11-08 오후 7 05 45" src="https://github.com/geonwooPark/Real-estate/assets/136573728/23e7d106-dced-4e55-9a40-21015940869b">|
+| 채팅 페이지  |  매물등록 페이지   |
+|  <img width="400" alt="스크린샷 2023-11-08 오후 7 08 21" src="https://github.com/geonwooPark/Real-estate/assets/136573728/335311d1-c785-4c0e-9332-620d633f2fed"> |  <img width="400" alt="스크린샷 2023-11-08 오후 7 06 03" src="https://github.com/geonwooPark/Real-estate/assets/136573728/5c128998-c14d-4c06-9f0a-d8f6e00899a0">|  
