@@ -21,15 +21,11 @@ import { numberToKorean } from '../utils/numberToKorean'
 import ChatRoom from '../components/ChatRoom'
 import { ChatRoomType } from '../interfaces/interfaces'
 import Message from '../components/Message'
-import Spinner from '../components/Spinner'
 import EmptyState from '../components/EmptyState'
-import { useAppDispatch } from '../store/store'
-import { setAlert } from '../store/features/alertSlice'
 
 export default function Chat() {
   const location = useLocation()
   const user1 = auth.currentUser?.uid
-  const dispatch = useAppDispatch()
 
   const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoomType | null>(
     null,
@@ -49,7 +45,11 @@ export default function Chat() {
 
     const buyer = await getDoc(doc(db, 'users', user1))
     const seller = await getDoc(doc(db, 'users', listing.postedBy))
-    setCurrentChatRoom({ listing, me: buyer.data(), other: seller.data() })
+    setCurrentChatRoom({
+      listing,
+      me: buyer.data(),
+      other: seller.data(),
+    })
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -78,17 +78,10 @@ export default function Chat() {
   }
 
   useEffect(() => {
-    if (location.state) {
-      getChat(location.state)
-    }
-  }, [])
-
-  useEffect(() => {
     const getChatList = async () => {
       const q = query(
         collection(db, 'messages'),
         where('users', 'array-contains', user1),
-        orderBy('updatedAt', 'desc'),
       )
       const querySnap = await getDocs(q)
       const messages = querySnap.docs.map((doc) => doc.data())
@@ -118,6 +111,9 @@ export default function Chat() {
         })
       }
       setChatRooms(chatRooms)
+    }
+    if (location.state) {
+      getChat(location.state)
     }
     getChatList()
   }, [])

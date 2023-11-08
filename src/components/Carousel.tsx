@@ -3,12 +3,17 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 // import 'slick-carousel/slick/slick-theme.css'
 import { IconType } from 'react-icons'
-import { HiOutlineArrowSmRight, HiOutlineArrowSmLeft } from 'react-icons/hi'
 import { ImagesType } from '../interfaces/interfaces'
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from 'react-icons/md'
 
 interface CarouselProps {
   images: ImagesType[]
+  imageMode: 'object-cover' | 'object-contain' | 'object-fill'
   className: string
+  onClick?: () => void
 }
 
 interface ArrowProps {
@@ -17,11 +22,14 @@ interface ArrowProps {
   onClick?: React.MouseEventHandler<HTMLDivElement>
 }
 
-export default function Carousel({ images, className }: CarouselProps) {
+export default function Carousel({
+  images,
+  imageMode,
+  className,
+  onClick,
+}: CarouselProps) {
   if (!images) {
-    return (
-      <div className="bg-gray-300 h-[300px] md:h-[200px] lg:h-[300px] overflow-hidden"></div>
-    )
+    return <div>이미지 불러오는 중...</div>
   }
   const settings = {
     fade: true,
@@ -33,14 +41,14 @@ export default function Carousel({ images, className }: CarouselProps) {
     slidesToScroll: 1,
     nextArrow: (
       <NextArrow
-        icon={HiOutlineArrowSmRight}
-        customStyle="bg-white/70 rounded-full absolute top-[50%] -translate-y-[50%] right-2 cursor-pointer hover:opacity-50"
+        icon={MdOutlineKeyboardArrowRight}
+        customStyle="absolute top-[50%] -translate-y-[50%] right-2 cursor-pointer hover:opacity-50"
       />
     ),
     prevArrow: (
       <PrevArrow
-        icon={HiOutlineArrowSmLeft}
-        customStyle="bg-white/70 rounded-full absolute top-[50%] -translate-y-[50%] left-2 cursor-pointer hover:opacity-50 z-10"
+        icon={MdOutlineKeyboardArrowLeft}
+        customStyle="absolute top-[50%] -translate-y-[50%] left-2 cursor-pointer hover:opacity-50 z-10"
       />
     ),
   }
@@ -53,7 +61,8 @@ export default function Carousel({ images, className }: CarouselProps) {
             <img
               src={image.url}
               alt={`매물이미지${i}`}
-              className="w-full h-full object-cover"
+              className={`w-full h-full cursor-pointer ${imageMode}`}
+              onClick={onClick}
             ></img>
           </div>
         )
@@ -65,7 +74,7 @@ export default function Carousel({ images, className }: CarouselProps) {
 const NextArrow = ({ customStyle, onClick, icon: Icon }: ArrowProps) => {
   return (
     <div className={customStyle} onClick={onClick}>
-      {Icon && <Icon size={20} />}
+      {Icon && <Icon size={30} />}
     </div>
   )
 }
@@ -73,7 +82,7 @@ const NextArrow = ({ customStyle, onClick, icon: Icon }: ArrowProps) => {
 const PrevArrow = ({ customStyle, onClick, icon: Icon }: ArrowProps) => {
   return (
     <div className={customStyle} onClick={onClick}>
-      {Icon && <Icon size={20} />}
+      {Icon && <Icon size={30} />}
     </div>
   )
 }

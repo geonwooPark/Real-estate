@@ -13,7 +13,7 @@ export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { loggedIn, unread, setLoggedIn } = useAuthStatus()
+  const { loggedIn, unread, setLoggedIn, checkingStatus } = useAuthStatus()
   const [showMenu, setShowMenu] = useState(false)
 
   const goHome = () => {
@@ -99,15 +99,18 @@ export default function Header() {
                 </li>
               </>
             ) : (
-              <li
-                className={`text-gray-400 border-b-[3px] border-b-transparent ${
-                  pathMatchRoute('/sign-in') && 'sm:border-b-black !text-black'
-                }`}
-              >
-                <Link to={'/sign-in'} className="block leading-[48px]">
-                  로그인
-                </Link>
-              </li>
+              !checkingStatus && (
+                <li
+                  className={`text-gray-400 border-b-[3px] border-b-transparent ${
+                    pathMatchRoute('/sign-in') &&
+                    'sm:border-b-black !text-black'
+                  }`}
+                >
+                  <Link to={'/sign-in'} className="block leading-[48px]">
+                    로그인
+                  </Link>
+                </li>
+              )
             )}
           </ul>
         </div>
@@ -119,28 +122,44 @@ export default function Header() {
       `}
       >
         <ul className="text-center text-sm bg-gray-50 text-gray-400">
-          <li
-            className={`${pathMatchRoute('/create-listing') && 'text-black'}`}
-          >
-            <Link to={'/create-listing'} className="block py-2">
-              매물등록
-            </Link>
-          </li>
-          <li className={`${pathMatchRoute('/chat') && 'text-black'}`}>
-            <Link to={'/chat'} className="block py-2">
-              메시지
-            </Link>
-          </li>
-          <li className={`${pathMatchRoute('/profile') && 'text-black'}`}>
-            <Link to={'/profile'} className="block py-2">
-              프로필
-            </Link>
-          </li>
-          <li className="text-red-400">
-            <button onClick={onLogout} className="block w-full h-full py-2">
-              로그아웃
-            </button>
-          </li>
+          {loggedIn ? (
+            <>
+              <li
+                className={`${
+                  pathMatchRoute('/create-listing') && 'text-black'
+                }`}
+              >
+                <Link to={'/create-listing'} className="block py-2">
+                  매물등록
+                </Link>
+              </li>
+              <li className={`${pathMatchRoute('/chat') && 'text-black'}`}>
+                <Link to={'/chat'} className="block py-2">
+                  메시지
+                </Link>
+              </li>
+              <li className={`${pathMatchRoute('/profile') && 'text-black'}`}>
+                <Link to={'/profile'} className="block py-2">
+                  프로필
+                </Link>
+              </li>
+              <li className="text-red-400">
+                <button onClick={onLogout} className="block w-full h-full py-2">
+                  로그아웃
+                </button>
+              </li>
+            </>
+          ) : (
+            <li
+              className={`text-gray-400 border-b-[3px] border-b-transparent ${
+                pathMatchRoute('/sign-in') && 'sm:border-b-black !text-black'
+              }`}
+            >
+              <Link to={'/sign-in'} className="block leading-[48px]">
+                로그인
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </header>
