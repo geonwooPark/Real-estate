@@ -31,7 +31,7 @@ export default function ListingItem({ listing }: ListingItemProps) {
                   listing.monthly,
                 )}`}
           </p>
-          <p className="text-md mb-0.5 truncate">{listing.roadName}</p>
+          <p className="text-md mb-0.5 truncate">{listing.address.roadName}</p>
           <p className="text-md mb-2.5">
             {listing.area}평 ({(listing.area * 3.3058).toFixed(2)}㎡)
           </p>

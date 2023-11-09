@@ -42,7 +42,7 @@ export default function Header() {
   return (
     <header className="border-b">
       <div
-        className={`bg-white sticky w-full h-[48px] px-4 top-0 z-50 sm:max-w-6xl sm:mx-auto sm:flex sm:justify-between`}
+        className={`bg-white sticky top-0 z-50 w-full h-[48px] px-4 sm:max-w-6xl sm:mx-auto sm:flex sm:justify-between`}
       >
         <div className="w-full h-full flex items-center justify-between sm:w-auto sm:border-none">
           <div onClick={goHome} className="font-bold text-2xl cursor-pointer">

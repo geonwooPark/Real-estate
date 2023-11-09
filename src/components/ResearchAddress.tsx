@@ -22,27 +22,40 @@ export default function ResearchAddress({
       <div>
         <DaumPostcode
           onComplete={async (data) => {
-            setShowResearchAddress(false)
-            dispatch({ type: 'research-address', payload: data.address })
-            dispatch({ type: 'research-zipcode', payload: data.zonecode })
-            dispatch({
-              type: 'research-roadName',
-              payload: `${data.sido} ${data.sigungu} ${data.roadname}`,
-            })
-            const placeAddress = data.address
+            const {
+              address: dAddress,
+              zonecode,
+              bname,
+              sido,
+              sigungu,
+              roadname,
+            } = data
+
             await axios({
               url:
                 'https://dapi.kakao.com/v2/local/search/address.json?query=' +
-                placeAddress,
+                dAddress,
               headers: {
                 Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_API_KEY}`,
               },
             }).then((result) => {
+              console.log(result)
               const { x, y }: { x: number; y: number } =
                 result.data.documents[0]
-              dispatch({ type: 'research-latitude', payload: Number(y) })
-              dispatch({ type: 'research-longitude', payload: Number(x) })
+              const latitude = y
+              const longitude = x
+              dispatch({ type: 'research-latitude', payload: latitude })
+              dispatch({ type: 'research-longitude', payload: longitude })
             })
+
+            const address = {
+              dAddress,
+              zonecode,
+              roadName: `${sido} ${sigungu} ${roadname}`,
+              bname,
+            }
+            dispatch({ type: 'research-address', payload: address })
+            setShowResearchAddress(false)
           }}
         />
       </div>

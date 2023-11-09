@@ -6,9 +6,9 @@ import Button from './Button'
 import {
   AiFillHeart,
   AiOutlineCalendar,
-  AiOutlineClose,
   AiOutlineHeart,
   AiOutlinePushpin,
+  AiOutlineShareAlt,
 } from 'react-icons/ai'
 import { IoIosArrowForward } from 'react-icons/io'
 import { BiArea } from 'react-icons/bi'
@@ -52,6 +52,7 @@ export default function SideSlider({
   const { value } = useSnapShot<Fav>('favorites', listing.id)
 
   const [showEnlargedImage, setShowEnlargedImage] = useState(false)
+  const [copyUrl, setCopyUrl] = useState(false)
 
   const deleteListing = async () => {
     const confirm = window.confirm('해당 매물을 삭제 하시겠습니까?')
@@ -126,6 +127,7 @@ export default function SideSlider({
             setShowEnlargedImage={setShowEnlargedImage}
           />
         )}
+
         <aside
           className={`w-full md:w-[300px] lg:w-[400px] border-l bg-white md:absolute top-0 right-0 z-10 transition-transform duration-200 ease-in-out
           ${
@@ -134,6 +136,16 @@ export default function SideSlider({
               : 'md:translate-x-[300px] lg:translate-x-[400px]'
           }`}
         >
+          <div
+            className="text-gray-700 bg-white absolute top-4 right-4 w-8 h-8 flex justify-center items-center border rounded-3xl cursor-pointer shadow-sm z-30"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href)
+              setCopyUrl(true)
+              setTimeout(() => setCopyUrl(false), 2500)
+            }}
+          >
+            <AiOutlineShareAlt size={20} />
+          </div>
           <div
             className="text-gray-700 absolute top-[50%] -translate-x-[50%] -translate-y-[50%] z-20 bg-white border p-2 rounded-3xl shadow-lg cursor-pointer hidden md:block"
             onClick={() => setShowInfo(!showInfo)}
@@ -156,7 +168,9 @@ export default function SideSlider({
                   <Moment fromNow>{listing.publishedAt?.toDate()}</Moment>
                 </small>
               </div>
-              <p className="text-md mb-2 truncate">{listing.roadName}</p>
+              <p className="text-md mb-2 truncate">
+                {listing.address.roadName}
+              </p>
               <p
                 className={`text-lg font-semibold truncate ${
                   !listing.maintenanceFee && 'mb-6'
@@ -175,7 +189,9 @@ export default function SideSlider({
                   <small>관리비 {listing.maintenanceFee}만원</small>
                 </div>
               ) : null}
+
               <hr />
+
               <ul className="mb-4 mt-4 text-sm">
                 <li className="py-3 flex">
                   <BiArea size={24} className="mr-1.5" />
@@ -195,7 +211,9 @@ export default function SideSlider({
                   {listing.availableDate ? listing.availableDate : '미정'}
                 </li>
               </ul>
+
               <hr />
+
               <ul className="mb-4 mt-4 text-sm">
                 {listing.options.map((elem: OptionsType, i: number) => {
                   if (elem.status) {
@@ -208,14 +226,16 @@ export default function SideSlider({
                   }
                 })}
               </ul>
+
               <hr />
+
               <div className="mt-6">
                 <Editor content={listing.detail} readOnly={true} />
               </div>
             </div>
           </div>
           <div className="absolute bottom-0 w-full">
-            <div className="h-[40px] bg-gradient-to-t from-white	"></div>
+            <div className="h-[40px] bg-gradient-to-t from-white"></div>
             <div className="w-full bg-white px-4 py-2 border-t-[1px] flex">
               {listing.postedBy === auth.currentUser?.uid ? (
                 <>
@@ -266,6 +286,11 @@ export default function SideSlider({
             </div>
           </div>
         </aside>
+        {copyUrl && (
+          <p className="fixed bottom-10 left-[50%] translate-x-[-50%] bg-white border px-4 py-2 rounded-2xl text-sm text-gray-700 z-10">
+            링크가 복사되었습니다!
+          </p>
+        )}
       </>
     )
   )

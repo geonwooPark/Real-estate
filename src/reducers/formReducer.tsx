@@ -1,15 +1,13 @@
 import { Timestamp } from 'firebase/firestore'
-import { ImagesType, OptionsType } from '../interfaces/interfaces'
+import { AddressType, ImagesType, OptionsType } from '../interfaces/interfaces'
 
 export type InitialState = {
   itemType: '매매' | '전세' | '월세'
-  address: string
-  zipcode: string
-  roadName: string
-  latitude: number
-  longitude: number
+  address: AddressType
   area: number
   rooms: number
+  latitude: number
+  longitude: number
   bathrooms: number
   parking: boolean
   options: OptionsType[]
@@ -26,13 +24,16 @@ export type InitialState = {
 
 export const initialState: InitialState = {
   itemType: '매매',
-  address: '',
-  zipcode: '',
-  roadName: '',
-  latitude: 0,
-  longitude: 0,
+  address: {
+    dAddress: '',
+    zonecode: '',
+    roadName: '',
+    bname: '',
+  },
   area: 0,
   rooms: 1,
+  latitude: 0,
+  longitude: 0,
   bathrooms: 1,
   parking: false,
   options: [
@@ -65,9 +66,6 @@ export type ActionWithPayload =
     }
   | {
       type:
-        | 'research-address'
-        | 'research-zipcode'
-        | 'research-roadName'
         | 'select-parking'
         | 'select-options'
         | 'write-detail'
@@ -90,6 +88,10 @@ export type ActionWithPayload =
       type: 'fetch-listing'
       payload: InitialState
     }
+  | {
+      type: 'research-address'
+      payload: AddressType
+    }
 
 export const formReducer = (
   state = initialState,
@@ -105,18 +107,6 @@ export const formReducer = (
     }
     case 'research-address': {
       return { ...state, address: action.payload }
-    }
-    case 'research-zipcode': {
-      return { ...state, zipcode: action.payload }
-    }
-    case 'research-roadName': {
-      return { ...state, roadName: action.payload }
-    }
-    case 'research-longitude': {
-      return { ...state, longitude: action.payload }
-    }
-    case 'research-latitude': {
-      return { ...state, latitude: action.payload }
     }
     case 'set-area': {
       if (action.payload < 0) {
@@ -174,6 +164,12 @@ export const formReducer = (
     }
     case 'fetch-listing': {
       return { ...action.payload }
+    }
+    case 'research-latitude': {
+      return { ...state, latitude: Number(action.payload) }
+    }
+    case 'research-longitude': {
+      return { ...state, longitude: Number(action.payload) }
     }
   }
 }

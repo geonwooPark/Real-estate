@@ -29,3 +29,10 @@ export interface MessageType {
   updatedAt?: Timestamp
   users: string[]
 }
+
+export interface AddressType {
+  dAddress: string
+  zonecode: string
+  roadName: string
+  bname: string
+}

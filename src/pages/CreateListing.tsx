@@ -35,7 +35,7 @@ export default function CreateListing() {
       if (fileURLs.length === 0) {
         throw new Error('사진을 첨부해주세요.')
       }
-      if (state.address === '') {
+      if (state.address.dAddress === '') {
         throw new Error('주소를 입력해주세요.')
       }
       if (state.area === 0) {
@@ -56,6 +56,8 @@ export default function CreateListing() {
 
         imgs.push({ url: fileUrl, path: result.ref.fullPath })
       }
+
+      console.log(state)
 
       const result = await addDoc(collection(db, 'listings'), {
         ...state,
@@ -239,7 +241,7 @@ export default function CreateListing() {
         <div className="flex">
           <input
             className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-[88px] mr-2 text-center"
-            value={state.zipcode}
+            value={state.address.zonecode}
             placeholder="우편번호"
             required
             readOnly
@@ -247,7 +249,7 @@ export default function CreateListing() {
           />
           <input
             className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full"
-            value={state.address}
+            value={state.address.dAddress}
             placeholder="주소를 검색해보세요."
             required
             readOnly
@@ -269,7 +271,7 @@ export default function CreateListing() {
         <div className="flex items-center">
           <input
             type="number"
-            value={state.area.toString()}
+            value={state.area}
             required
             className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none text-center"
             onChange={(e) => {
@@ -291,7 +293,7 @@ export default function CreateListing() {
             </h4>
             <input
               type="number"
-              value={state.rooms.toString()}
+              value={state.rooms}
               className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full text-center"
               min={1}
               max={10}
@@ -311,7 +313,7 @@ export default function CreateListing() {
             </h4>
             <input
               type="number"
-              value={state.bathrooms.toString()}
+              value={state.bathrooms}
               className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full text-center"
               min={1}
               max={10}
@@ -382,7 +384,7 @@ export default function CreateListing() {
         <div className="flex items-center relative">
           <input
             type="number"
-            value={state.price.toString()}
+            value={state.price}
             required
             className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full text-center"
             onChange={(e) => {
@@ -407,7 +409,7 @@ export default function CreateListing() {
               <div className="flex items-center">
                 <input
                   type="number"
-                  value={state.monthly.toString()}
+                  value={state.monthly}
                   required
                   className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full text-center"
                   onChange={(e) => {
@@ -429,7 +431,7 @@ export default function CreateListing() {
             <div className="flex items-center">
               <input
                 type="number"
-                value={state.maintenanceFee.toString()}
+                value={state.maintenanceFee}
                 required
                 className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full text-center"
                 onChange={(e) => {
@@ -459,9 +461,7 @@ export default function CreateListing() {
           }}
         />
         {/* 상세설명 작성 */}
-        <h4>
-          상세설명<span className="text-red-600">*</span>
-        </h4>
+        <h4>상세설명</h4>
         <div className="mb-6 h-[240px] border border-gray-400 text-gray-800 rounded">
           <Editor
             content={state.detail}

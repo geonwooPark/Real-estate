@@ -1,18 +1,24 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 
 interface DropDownMenuProps {
-  label: string
+  label: '전체' | '매매' | '전세' | '월세'
+  labelClassName?: string
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function DropDownMenu({
   label,
+  labelClassName,
   isOpen,
   children,
   setIsOpen,
 }: PropsWithChildren<DropDownMenuProps>) {
   const [animation, setAnimation] = useState(false)
+
+  const onClick = () => {
+    setIsOpen(!isOpen)
+  }
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
@@ -31,8 +37,10 @@ export default function DropDownMenu({
   return (
     <div className="relative text-gray-700 text-sm">
       <div
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-[60px] bg-white px-4 py-2 border shadow-md rounded-sm cursor-pointer"
+        onClick={onClick}
+        className={`w-[60px] bg-white px-4 py-2 border shadow-sm cursor-pointer 
+          ${labelClassName}
+        `}
       >
         {label}
       </div>
