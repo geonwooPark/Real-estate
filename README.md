@@ -108,6 +108,6 @@
 | :-------------------------------------------: | :------------: |
 |  <img width="400" alt="스크린샷 2023-11-08 오후 7 04 19" src="https://github.com/geonwooPark/Real-estate/assets/136573728/f05a1b9b-7d67-418b-bebf-94b824136e3a"> |  <img width="400" alt="스크린샷 2023-11-08 오후 7 04 28" src="https://github.com/geonwooPark/Real-estate/assets/136573728/e04f154c-8647-4a04-bce6-3dfd7b32f423">|  
 | 메인 페이지   |  상세 페이지   |  
-| <img width="400" alt="스크린샷 2023-11-08 오후 7 04 52" src="https://github.com/geonwooPark/Real-estate/assets/136573728/a9271aa7-311c-4d5b-980e-66eb281e7d9d"> |  <img width="400" alt="스크린샷 2023-11-08 오후 7 05 45" src="https://github.com/geonwooPark/Real-estate/assets/136573728/23e7d106-dced-4e55-9a40-21015940869b">|
+| <img width="400" alt="스크린샷 2023-11-10 오전 2 50 26" src="https://github.com/geonwooPark/Real-estate/assets/136573728/298268b0-e914-4c4c-b62a-0352c203fd84"> |  <img width="400" alt="스크린샷 2023-11-08 오후 7 05 45" src="https://github.com/geonwooPark/Real-estate/assets/136573728/23e7d106-dced-4e55-9a40-21015940869b">|
 | 채팅 페이지  |  매물등록 페이지   |
 |  <img width="400" alt="스크린샷 2023-11-08 오후 7 08 21" src="https://github.com/geonwooPark/Real-estate/assets/136573728/335311d1-c785-4c0e-9332-620d633f2fed"> |  <img width="400" alt="스크린샷 2023-11-08 오후 7 06 03" src="https://github.com/geonwooPark/Real-estate/assets/136573728/5c128998-c14d-4c06-9f0a-d8f6e00899a0">|  
