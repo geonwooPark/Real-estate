@@ -4,6 +4,8 @@ import { FcGoogle } from 'react-icons/fc'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   GoogleAuthProvider,
+  browserSessionPersistence,
+  setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth'
@@ -39,18 +41,28 @@ export default function Signin() {
         throw new Error('비밀번호를 입력하세요.')
       }
       setBtnLoading(true)
-      const result = await signInWithEmailAndPassword(auth, email, password)
-      if (result.user) {
-        setFormData({ email: '', password: '' })
-        dispatch(
-          setAlert({
-            status: 'success',
-            message: '로그인에 성공했습니다.',
-          }),
-        )
-
-        navigate('/')
-      }
+      setPersistence(auth, browserSessionPersistence)
+        .then(async () => {
+          const result = await signInWithEmailAndPassword(auth, email, password)
+          if (result.user) {
+            setFormData({ email: '', password: '' })
+            navigate('/')
+            dispatch(
+              setAlert({
+                status: 'success',
+                message: '로그인에 성공했습니다.',
+              }),
+            )
+          }
+        })
+        .catch((error) => {
+          dispatch(
+            setAlert({
+              status: 'error',
+              message: error.message,
+            }),
+          )
+        })
     } catch (error) {
       if (error instanceof Error) {
         dispatch(
@@ -69,27 +81,41 @@ export default function Signin() {
     setBtn2Loading(true)
     try {
       const provider = new GoogleAuthProvider()
-      const result = await signInWithPopup(auth, provider)
+      setPersistence(auth, browserSessionPersistence)
+        .then(async () => {
+          const result = await signInWithPopup(auth, provider)
+          if (result.user) {
+            setFormData({ email: '', password: '' })
+            navigate('/')
+            dispatch(
+              setAlert({
+                status: 'success',
+                message: '로그인에 성공했습니다.',
+              }),
+            )
+          }
 
-      const docRef = doc(db, 'users', result.user.uid)
-      const docSnap = await getDoc(docRef)
-      if (!docSnap.exists()) {
-        await setDoc(docRef, {
-          uid: result.user.uid,
-          name: result.user.displayName,
-          email: result.user.email,
-          photoUrl: result.user.photoURL,
-          photoPath: '',
-          createdAt: Timestamp.fromDate(new Date()),
+          const docRef = doc(db, 'users', result.user.uid)
+          const docSnap = await getDoc(docRef)
+          if (!docSnap.exists()) {
+            await setDoc(docRef, {
+              uid: result.user.uid,
+              name: result.user.displayName,
+              email: result.user.email,
+              photoUrl: result.user.photoURL,
+              photoPath: '',
+              createdAt: Timestamp.fromDate(new Date()),
+            })
+          }
         })
-      }
-      navigate('/')
-      dispatch(
-        setAlert({
-          status: 'success',
-          message: '로그인에 성공했습니다.',
-        }),
-      )
+        .catch((error) => {
+          dispatch(
+            setAlert({
+              status: 'error',
+              message: error.message,
+            }),
+          )
+        })
     } catch (error) {
       if (error instanceof Error) {
         dispatch(
