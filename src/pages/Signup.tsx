@@ -94,32 +94,35 @@ export default function SignUp() {
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
           <form onSubmit={onSubmit}>
-            <Input
-              className="w-full mb-6"
-              type="name"
-              name="name"
-              value={name}
-              placeholder="이름"
-              onChange={onChange}
-            />
-            <Input
-              className="w-full mb-6"
-              type="email"
-              name="email"
-              value={email}
-              placeholder="이메일"
-              onChange={onChange}
-            />
-            <Input
-              className="w-full mb-6"
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={password}
-              placeholder="비밀번호"
-              onChange={onChange}
-              icon={showPassword ? AiFillEyeInvisible : AiFillEye}
-              iconAction={iconAction}
-            />
+            <div className="mb-5">
+              <Input
+                type="name"
+                name="name"
+                label="이름"
+                value={name}
+                onChange={onChange}
+              />
+            </div>
+            <div className="mb-5">
+              <Input
+                type="email"
+                name="email"
+                label="이메일"
+                value={email}
+                onChange={onChange}
+              />
+            </div>
+            <div className="mb-5">
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                label="비밀번호"
+                value={password}
+                onChange={onChange}
+                icon={showPassword ? AiFillEyeInvisible : AiFillEye}
+                iconAction={iconAction}
+              />
+            </div>
             <div className="flex justify-center whitespace-nowrap text-sm">
               <p className="mb-6">
                 계정이 있으신가요?

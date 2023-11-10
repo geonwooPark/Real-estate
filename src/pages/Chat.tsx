@@ -206,6 +206,7 @@ export default function Chat() {
                   onChange={onTextChange}
                   className="px-3 py-2 w-full rounded-full text-sm outline-none"
                   placeholder="메시지를 입력하세요."
+                  autoComplete="off"
                 />
                 <button
                   type="submit"

@@ -39,7 +39,6 @@ export default function ResearchAddress({
                 Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_API_KEY}`,
               },
             }).then((result) => {
-              console.log(result)
               const { x, y }: { x: number; y: number } =
                 result.data.documents[0]
               const latitude = y

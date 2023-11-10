@@ -61,14 +61,15 @@ export default function ForgotPassword() {
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
           <form onSubmit={onSubmit}>
-            <Input
-              className="w-full mb-6"
-              type="email"
-              name="email"
-              value={email}
-              placeholder="이메일"
-              onChange={onChange}
-            />
+            <div className="mb-5">
+              <Input
+                type="email"
+                name="email"
+                value={email}
+                label="이메일"
+                onChange={onChange}
+              />
+            </div>
             <div className="flex justify-center whitespace-nowrap text-sm">
               <p className="mb-6">
                 계정이 없으신가요?

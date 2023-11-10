@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from '../store/store'
 import { setMap } from '../store/features/mapSlice'
 import DropDownMenu from '../components/DropdownMenu'
 import { setAlert } from '../store/features/alertSlice'
-import { flushSync } from 'react-dom'
 
 const { kakao } = window as any
 
@@ -76,12 +75,6 @@ export default function Home() {
     } else {
       const ps = new kakao.maps.services.Places()
       ps.keywordSearch(keyword, placesSearchCB)
-      dispatch(
-        setAlert({
-          status: 'error',
-          message: '검색 조건에 맞는 결과가 없습니다!',
-        }),
-      )
     }
   }
 
@@ -295,6 +288,7 @@ export default function Home() {
                   onChange={onChange}
                   className="text-gray-700 w-full px-4 py-2 border shadow-sm text-sm focus:outline-none"
                   placeholder="장소를 검색해보세요."
+                  autoComplete="off"
                 />
                 <button
                   type="submit"

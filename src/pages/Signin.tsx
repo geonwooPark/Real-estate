@@ -40,9 +40,9 @@ export default function Signin() {
       if (!password) {
         throw new Error('비밀번호를 입력하세요.')
       }
-      setBtnLoading(true)
       setPersistence(auth, browserSessionPersistence)
         .then(async () => {
+          setBtnLoading(true)
           const result = await signInWithEmailAndPassword(auth, email, password)
           if (result.user) {
             setFormData({ email: '', password: '' })
@@ -78,11 +78,11 @@ export default function Signin() {
   }
 
   const onGoogleClick = async () => {
-    setBtn2Loading(true)
     try {
       const provider = new GoogleAuthProvider()
       setPersistence(auth, browserSessionPersistence)
         .then(async () => {
+          setBtn2Loading(true)
           const result = await signInWithPopup(auth, provider)
           if (result.user) {
             setFormData({ email: '', password: '' })
@@ -147,26 +147,28 @@ export default function Signin() {
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
           <form onSubmit={onSubmit}>
-            <Input
-              className="w-full mb-6"
-              type="email"
-              name="email"
-              value={email}
-              placeholder="이메일"
-              onChange={onChange}
-            />
-            <Input
-              className="w-full mb-6"
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={password}
-              placeholder="비밀번호"
-              onChange={onChange}
-              icon={showPassword ? AiFillEyeInvisible : AiFillEye}
-              iconAction={iconAction}
-            />
+            <div className="mb-5">
+              <Input
+                type="email"
+                name="email"
+                label="이메일"
+                value={email}
+                onChange={onChange}
+              />
+            </div>
+            <div className="mb-5">
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                label="비밀번호"
+                value={password}
+                onChange={onChange}
+                icon={showPassword ? AiFillEyeInvisible : AiFillEye}
+                iconAction={iconAction}
+              />
+            </div>
             <div className="flex justify-between whitespace-nowrap text-sm">
-              <p className="mb-6">
+              <p className="mb-5">
                 계정이 없으신가요?
                 <Link
                   to="/sign-up"
@@ -192,7 +194,7 @@ export default function Signin() {
               disabled={btnLoading}
               fullWidth={true}
             />
-            <div className="flex items-center my-4 before:border-t before:flex-1 before:border-gray-700  after:border-t after:flex-1 after:border-gray-700 ">
+            <div className="flex items-center my-3 before:border-t before:flex-1 before:border-gray-700  after:border-t after:flex-1 after:border-gray-700 ">
               <p className="text-center text-sm text-gray-700 mx-2">또는</p>
             </div>
             <Button

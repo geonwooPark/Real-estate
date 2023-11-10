@@ -137,7 +137,7 @@ export default function Profile() {
       <section className="max-w-6xl px-4 mx-auto">
         <h1>내 프로필</h1>
         <div className="w-full sm:w-[50%] mt-6 mx-auto">
-          <div className="relative w-[200px] mx-auto rounded-full mb-4 overflow-hidden  group shadow-md">
+          <div className="relative w-[200px] mx-auto rounded-full mb-5 overflow-hidden group shadow-md">
             <>
               {auth.currentUser?.photoURL ? (
                 <img
@@ -174,26 +174,27 @@ export default function Profile() {
                     setImageFile(e.target.files[0])
                   }
                 }}
+                autoComplete="off"
               />
             </>
           </div>
 
           <form>
-            <Input
-              type="text"
-              name="name"
-              value={name!}
-              disabled={!changeDetail}
-              className={`w-full text-center
-                    ${changeDetail ? 'border-gray-300' : 'border-white'}
-                    ${changeDetail && 'bg-blue-100'}`}
-              onChange={onChange}
-              icon={changeDetail ? AiFillEdit : AiOutlineEdit}
-              iconAction={onNameEdit}
-            />
-            <div className="px-4 py-3 text-sm text-gray-700 bg-white text-center">
-              {email}
+            <div>
+              <Input
+                type="text"
+                name="name"
+                value={name!}
+                disabled={!changeDetail}
+                className={`border-none !p-3 disabled:cursor-text
+                      ${changeDetail ? 'border-gray-300' : ''}
+                      ${changeDetail && 'bg-blue-100'}`}
+                onChange={onChange}
+                icon={changeDetail ? AiFillEdit : AiOutlineEdit}
+                iconAction={onNameEdit}
+              />
             </div>
+            <div className="p-3 text-sm">{email}</div>
           </form>
         </div>
       </section>

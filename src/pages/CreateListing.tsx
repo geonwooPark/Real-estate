@@ -57,8 +57,6 @@ export default function CreateListing() {
         imgs.push({ url: fileUrl, path: result.ref.fullPath })
       }
 
-      console.log(state)
-
       const result = await addDoc(collection(db, 'listings'), {
         ...state,
         images: imgs,
@@ -170,6 +168,7 @@ export default function CreateListing() {
                 multiple
                 onChange={onFileChange}
                 className="hidden"
+                autoComplete="off"
               />
               <div className="pt-2.5 overflow-auto sm:overflow-visible	flex items-end sm:flex-wrap gap-4 min-h-[80px]">
                 <div className="invisible">
@@ -246,6 +245,7 @@ export default function CreateListing() {
             required
             readOnly
             onClick={() => setShowResearchAddress(!showResearchAddress)}
+            autoComplete="off"
           />
           <input
             className="px-4 py-3 text-sm border border-gray-400 text-gray-800 rounded outline-none w-full"
@@ -256,6 +256,7 @@ export default function CreateListing() {
             onClick={() => {
               setShowResearchAddress(!showResearchAddress)
             }}
+            autoComplete="off"
           />
         </div>
         {showResearchAddress && (
@@ -280,6 +281,7 @@ export default function CreateListing() {
                 payload: e.target.valueAsNumber,
               })
             }}
+            autoComplete="off"
           />
           <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
             평 / {state.area ? (state.area * 3.3058).toFixed(2) : 0}㎡
@@ -304,6 +306,7 @@ export default function CreateListing() {
                   payload: e.target.valueAsNumber,
                 })
               }}
+              autoComplete="off"
             />
           </div>
           {/* 욕실 갯수 선택 */}
@@ -324,6 +327,7 @@ export default function CreateListing() {
                   payload: e.target.valueAsNumber,
                 })
               }}
+              autoComplete="off"
             />
           </div>
         </div>
@@ -393,6 +397,7 @@ export default function CreateListing() {
                 payload: e.target.valueAsNumber,
               })
             }}
+            autoComplete="off"
           />
           <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">만원</p>
           <small className="absolute right-0 top-14">
@@ -418,6 +423,7 @@ export default function CreateListing() {
                       payload: e.target.valueAsNumber,
                     })
                   }}
+                  autoComplete="off"
                 />
                 <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
                   만원
@@ -440,6 +446,7 @@ export default function CreateListing() {
                     payload: e.target.valueAsNumber,
                   })
                 }}
+                autoComplete="off"
               />
               <p className="ml-2 text-sm text-gray-700 whitespace-nowrap">
                 만원
@@ -459,6 +466,7 @@ export default function CreateListing() {
               payload: e.target.value.toString(),
             })
           }}
+          autoComplete="off"
         />
         {/* 상세설명 작성 */}
         <h4>상세설명</h4>
