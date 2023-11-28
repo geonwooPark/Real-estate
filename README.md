@@ -2,7 +2,7 @@
 **개발기간: 2023.09.06 ~ 2022.09.28 (약 3주)
 
 ## 배포 주소
-> [https://real-estate-red-two.vercel.app/](https://real-estate-red-two.vercel.app/) <br>
+> [https://ventileco-real-estate.vercel.app/](https://ventileco-real-estate.vercel.app/) <br>
 
 ## 프로젝트 소개
 
